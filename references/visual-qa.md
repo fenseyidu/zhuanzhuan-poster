@@ -33,6 +33,8 @@ If two or more uploaded product assets, or two or more distinct product subjects
 
 If any required object drifts in either group, mark `商品层` as FAIL even when the overall image still looks category-correct.
 
+For every `biz_membership + cat_membership_day` A/S 2:1 head, reconstruct `slot_replacement_map` from `template.json.product_slots` and read `template.json.layout_coupling` before product QA. First run one mandatory `主视觉联动版式预检`: inspect the brush title and lower product-and-coin group together. `会员` B is excluded from this preflight. The title must follow `title_reference_box` in position, height, width, baseline, and single-line shape; its visual center must align to `title_visual_center_percent` within `title_visual_center_tolerance_percent`, without visibly colliding with the future brand/date reservations. The foreground must remain inside `foreground_region`, with no product subject above `foreground_visible_top_max_y`. If either title or foreground fails, mark the whole result `主视觉联动版式失败`; do not evaluate it as an isolated title or product correction, and do not compose fixed layers. Only after this PASS, verify automatic assignment unless the user explicitly overrode it: the strongest portrait product should occupy the center main slot, flat products should occupy the side slots, and upload order must not be used except to break a shape/hierarchy tie. Check each supplied product against its named `reference_subject`, not only its generic position: the product must occupy that original mother-template object's slot and retain its required size, position, angle, layer order, and visible focus. The group must read as a staggered, layered lower foreground rather than a complete front-facing lineup. Bottom-edge emergence/crop is optional: decide it from the product's size, recognizability, and the lower visual hierarchy; smaller products may be fully visible. When it is used, foreground coins must naturally occlude the lower transition, rather than leaving a hard crop; do not require every product to expose an equal half. A product that is recognizable but appears in another reference subject's slot is a `商品层` FAIL. If the final prompt does not explicitly enumerate every active `reference_subject → uploaded product` mapping, mark pre-output QA as FAIL and rebuild the prompt before generation.
+
 If the generated image cannot be inspected, mark Visual QA as not reached and run Technical QA instead.
 
 ## 2. Decision Policy
@@ -45,19 +47,9 @@ Use these conclusions exactly:
 
 Any FAIL in a required layer should trigger `需定向重生` when image generation is available. Default retry count is one.
 
-The targeted correction prompt is a local repair instruction, not a new full generation prompt. It must:
+The targeted correction prompt is a local repair instruction, not a new full generation prompt. Default to the current generated image as the sole retry input. Add a reference image only when the editing capability explicitly distinguishes its role from the edit target; otherwise, keep mother-layout and product-source images in QA only. Submit `以当前图为唯一编辑目标。编辑范围。唯一修改动作。其余内容不变。` For measurable position, scale, crop, or slot-geometry repair, omit the diagnostic clause from the submitted prompt: record it in QA notes and submit one direct action in the form `以当前图为唯一编辑目标。仅将……，使……，不替换、重排或回退当前商品内容。其余内容不变。`; a combined scale-and-translate instruction counts as one geometry action. It may use one or two short sentences, but must not enumerate passed composition, product attributes, lighting, typography, background, negative rules, or preservation logic. Record those details in the QA notes instead.
 
-- start from the previous generated image/version
-- state in one short sentence that all non-failed layers stay unchanged
-- name the failed layer and concrete failure point
-- include only the correction action for that failed layer
-- re-reference the user-provided product image and preserve product identity, color, structure, proportion, and key identifying features
-- preserve user-provided text and facts
-- explicitly avoid redesigning passed layers
-- when repairing `商品层` or `构图层`, explicitly lock the passed layout attributes that must not change, such as canvas size, product position, product scale, product angle, front/back hierarchy, crop boundary, title block, background, and lighting
-- not enumerate or re-describe passed composition, product position, product scale, background system, color, light, card style, people relation, or information module style in the prompt submitted for regeneration
-
-When only one layer fails, repair only that layer. When multiple layers fail, choose the most blocking layer first and keep the other passed layers locked. Do not turn a targeted correction prompt into the original full prompt or a new creative brief. For `biz_consumer_electronics / 消费电子`, targeted regeneration must behave like a local patch: the prompt submitted to the model should only say the failed layer, the failure, and the correction action; the review may list passed layers, but the regeneration prompt must not restate them as creative content.
+When only one layer fails, repair only that layer. When multiple layers fail, choose the most blocking layer first. Do not turn a targeted correction prompt into the original full prompt or a new creative brief. For all business lines, including `biz_consumer_electronics / 消费电子`, the submitted retry must behave like a local patch: normally state the concrete failure, one direct action, then `其余内容不变。`; use the geometry-repair exception above when a relative canvas position, proportional size, crop boundary, or reference-slot relation is the actionable target.
 
 ## 3. Layer Checklist
 
@@ -217,6 +209,7 @@ PASS:
 - `自动`: output follows the resolved visual direction in the normalized task card.
 - For collectible toys, supplement cues 平面风 / 平面拼贴 route toward flat card or sticker-frame display; supplement cues 立体风 / 立体展示 route toward clean cute 3D space; if no such supplement exists and visual expression mode is `场景表达`, flat background plus light 3D topic display is preferred.
 - For collectible toys, each resolved direction follows a limited-element approach: 平面风 keeps a unified flat language, 场景表达 combines a restrained flat topic background with light 3D display, and 立体风 keeps one clean cute 3D display space.
+- For N-category collectible toys, A-level output visibly forms one journal-style paper-craft layout with a torn-paper title area, pale-green grid memo, top ring binder, paper tape, sparse stickers, and dotted doodle lines; S-level output visibly contains torn-paper edges integrated into the flat-background-plus-light-3D display. Their absence is a Visual Expression Mode Layer FAIL.
 - For N-category game character visuals, B routes to a simple light-colored flat background plus game character main visual, using only a small amount of dotted texture, diagonal line texture, light UI linework, abstract symbols, or theme color blocks to create game identity; A routes to abstract light-shadow game atmosphere plus game main visual, and S routes to stronger game content atmosphere while keeping title readability.
 - For 4:3, 16:9, and 2:1 N-category game character visuals, character or role-group weight sits on the right or right-leaning main visual area while the title remains readable on the left.
 

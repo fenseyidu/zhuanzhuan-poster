@@ -7,6 +7,7 @@
 | `biz_n_category` | Interest consumption, professional gear, lifestyle and niche goods. | 内容审美、兴趣消费、商品专题感、轻生活方式或专业器材感。 | `neg_product_identity`, `neg_visual_clutter`, `neg_no_template_sale` |
 | `biz_consumer_electronics` | Consumer electronics sale and conversion. | 干净、专业、商品清晰、轻科技、轻量文字信息层、低到中装饰密度；文字系统偏现代广告标题宋体或当代高对比中文 Serif 气质。 | `neg_product_identity`, `neg_no_unprovided_facts`, `neg_no_brand_hallucination` |
 | `biz_recycle` | Idle item recycle service. | 可信、安全、简单省心、平台感、克制稳定；浅色简洁背景承托商品或回收对象，并继承少量产品自带色彩。 | `neg_business_recycle_not_sale`, `neg_service_claims_source`, `neg_no_unprovided_facts` |
+| `biz_membership` | 转转平台会员日与会员季节活动；不包含第三方会员充值、点卡或权益卡。 | 高级、温暖、克制的会员活动感；A/S 默认使用暖金质感图生图底图与固定代码合成层。 | `neg_no_unprovided_facts`, `neg_membership_no_fixed_layer_redraw`, `neg_membership_no_third_party_card` |
 
 ## Visual Tone Inheritance
 
@@ -37,6 +38,7 @@ Use these as business-line tone boundaries. Formal prohibitions still come from 
 - N 品类：避免纯折扣模板、无关通用舞台、没有品类逻辑的商品堆叠，以及不能解释兴趣或品类价值的背景装饰。
 - 消费电子：保持干净、专业、商品识别清楚的商品呈现；科技感以材质、屏幕光、局部聚光、精致反射、深浅对比和主题色点睛体现。
 - 回收：避免普通售卖海报语气、商品英雄式售卖重点、虚假官方保障、无来源服务承诺，以及遮蔽回收服务语义的价格优先促销表达。
+- 会员：避免第三方充值卡语义、虚构会员等级/折扣/有效期/权益；固定标识、日期、规则按钮和底部弧形由合成层负责，不能让 AI 重画。
 
 ## Consumer Electronics Typography
 

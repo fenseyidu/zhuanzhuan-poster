@@ -3,7 +3,7 @@
 "map_n_billiards","biz_n_category","cat_billiards_cue","台球杆专业器材，强调材质、手感、专业选择和兴趣消费价值。","high","专业器材、材质价值、兴趣消费。","neg_product_identity|neg_no_crop_occlusion",""
 "map_n_music","biz_n_category","cat_musical_instrument","乐器兴趣品类，强调练习、演奏、专业或生活方式价值。","high","练习演奏、兴趣消费、专业器材。","neg_product_identity|neg_no_crop_occlusion|neg_visual_clutter",""
 "map_n_game","biz_n_category","cat_game","游戏兴趣品类，当前承接单张游戏人物、角色立绘、多张游戏人物或多角色立绘主视觉，强调游戏内容感、角色主视觉和活动参与。","medium","游戏内容、角色主视觉、活动参与。","neg_game_no_ip_hallucination|neg_no_unprovided_facts|neg_visual_clutter|neg_game_character_card_misuse","会员充值、点卡和权益卡归 N 品类卡券；Switch、PS5、手柄、主机等归消费电子游戏设备。"
-"map_n_collectible","biz_n_category","cat_collectible_toy","潮玩收藏和礼物型小物品类，强调收藏、趣味、入坑理由、送礼感和专题陈列价值。","medium","收藏兴趣、趣味价值、入坑理由、礼物感、潮玩专题陈列。","neg_product_identity|neg_game_no_ip_hallucination|neg_no_brand_hallucination|neg_no_template_sale",""
+"map_n_collectible","biz_n_category","cat_collectible_toy","潮玩收藏和礼物型小物品类，强调收藏、趣味、入坑理由、送礼感和专题陈列价值。","medium","收藏兴趣、趣味价值、入坑理由、礼物感、潮玩专题陈列。","neg_product_identity|neg_game_no_ip_hallucination|neg_no_brand_hallucination|neg_no_template_sale|neg_no_text_outline_shadow",""
 "map_n_coupon","biz_n_category","cat_card_coupon","虚拟权益和充值卡品类，强调会员/充值/兑换对象、使用价值、可信卡面和信息清晰。","medium","虚拟权益、会员充值、兑换价值、信息清晰。","neg_no_unprovided_facts|neg_copy_exact_only","适合视频会员充值卡、咖啡充值卡、游戏会员、游戏点卡和权益卡等虚拟权益卡；品牌平台和面额必须来自用户或数据。"
 "map_n_general","biz_n_category","cat_general","N 品类综合活动，强调多兴趣品类集合和共同活动理由。","medium","多兴趣集合、共同活动理由。","neg_visual_clutter|neg_no_template_sale",""
 "map_ce_phone","biz_consumer_electronics","cat_phone","手机售卖主体，强调商品识别、成色、权益、转化和平台信任。","high","售卖主体、商品识别、权益转化。","neg_product_identity|neg_no_unprovided_facts|neg_no_brand_hallucination",""
@@ -20,3 +20,4 @@
 "map_recycle_luxury","biz_recycle","cat_luxury","奢侈品回收对象，强调价值、安全、鉴定和平台信任。","medium","回收对象、价值鉴定、安全信任。","neg_business_recycle_not_sale|neg_service_claims_source|neg_no_unprovided_facts|neg_no_brand_hallucination",""
 "map_recycle_gold","biz_recycle","cat_gold","黄金回收对象，强调价值、鉴定、安全和打款可信。","medium","回收对象、价值鉴定、打款可信。","neg_business_recycle_not_sale|neg_service_claims_source|neg_no_unprovided_facts",""
 "map_recycle_general","biz_recycle","cat_general","回收综合品类，强调覆盖范围、服务流程和平台保障。","medium","回收覆盖、服务流程、平台保障。","neg_business_recycle_not_sale|neg_service_claims_source|neg_no_unprovided_facts|neg_visual_clutter",""
+"map_membership_day","biz_membership","cat_membership_day","平台会员日活动，强调活动主题、会员归属和高级温暖的视觉体验。","high","会员日、季节性会员活动、暖金高级活动背景、固定合成层。","neg_no_unprovided_facts|neg_membership_no_fixed_layer_redraw|neg_membership_no_third_party_card","A/S 通过图生图底图加代码合成输出；B 仅借用回收 B 档的视觉路径。"

@@ -285,38 +285,47 @@ QA decision:
 - `需定向重生`: one or more correctable layers fail, such as text effects, title spacing, product cropping, background discontinuity, wrong product relation, or visual clutter.
 - `需人工后期`: image is directionally good but exact Chinese text, logo, product details, or small factual text cannot be reliably fixed through generation alone.
 
-When QA fails and the task is image generation, write a local repair prompt instead of rewriting the full original prompt. The targeted prompt must:
+When QA fails and the task is image generation, write a local repair prompt instead of rewriting the full original prompt. The submitted targeted prompt has exactly three parts:
 
-- begin with `请基于上一版重新生成`
-- state in one short sentence that all non-failed layers stay unchanged
-- name the failed layer and concrete failure point
-- include only the correction action for the failed layer
-- keep the submitted regeneration prompt as one compact local-patch paragraph, not a full creative brief
-- reuse selected negative rules only when relevant to the failed layer
-- re-reference the user-provided product image and keep product appearance, color, structure, proportion, and key identifying features stable
-- preserve user-provided text and facts
-- when the failed layer is `商品层` or `构图层`, explicitly lock the passed layout attributes that must not move, resize, rotate, re-layer, or re-crop, such as canvas size, overall composition, each passed product's position, size, angle, front/back hierarchy, crop boundary, title block, background, and lighting
-- explicitly say not to redesign passed layers
+1. the concrete failure;
+2. one direct correction action;
+3. `其余内容不变。`
 
-Do not restate the complete original creative brief in a targeted correction prompt. Do not enumerate passed composition, product display, background, card style, color system, lighting, information modules, typography, or decoration in the prompt submitted to the image model; those details belong in `保留项` in `review.md`, not in the regeneration prompt. If only text fails, do not redesign composition, product display, background, card style, color system, or decoration. If only product fails, do not redesign typography or background. A good targeted prompt should read like: `请基于上一版重新生成。除本次修正项外，其余画面保持上一版不变。仅修正{失败层}：{失败点}。修正方式：{修正动作}。不要重新设计其他已通过部分。`
+Use one or two short sentences only. Put passed-layer details, product-fidelity checks, negative rules, and any preservation rationale in `保留项` and QA notes—not in the prompt submitted to the image model. Do not restate the creative brief, name the failed layer redundantly, enumerate layout attributes, or issue several correction actions. The templates below are diagnosis aids; before submitting, compress them to this three-part form.
+
+## Targeted Edit Input Contract
+
+Default to a single-target local edit: submit the current generated image as the only image input, and state `以当前图为唯一编辑目标。` at the start of the correction prompt. Do not submit a mother-layout image, prior reference image, source product image, or style reference as an untyped additional input: an interface without explicit image roles can treat that image as a replacement source and overwrite already-correct products, text, or composition.
+
+Add a second image only when the editing capability explicitly supports and labels its role as `composition reference`, `product reference`, or equivalent. In that case, the current generated image must be labeled `edit target`; the correction still changes only the failed item. If a product-identity repair needs the original product image but the capability cannot assign it a product-reference role, do not attempt a reference-image retry; mark it `需人工后期` or use a tool that supports role-specific references.
+
+Example: `以当前图为唯一编辑目标。仅将手机和笔记本下移，使其恢复贴底裁切与可见高度，不替换或重排当前商品内容。其余内容不变。`
+
+For measurable position, scale, crop, or slot-geometry repair, do not submit the diagnosis clause. Keep it in QA notes and submit one direct geometry action with a relative canvas target or reference-slot relation. Treat a combined scale-and-translate operation as one action:
+
+```text
+以当前图为唯一编辑目标。仅将{商品组}整体{缩小并下移}，使{主视觉}仅位于画面{下方 N% 的区域}，不替换、重排或回退当前商品内容。其余内容不变。
+```
 
 For `biz_consumer_electronics / 消费电子`, targeted regeneration must be especially narrow. Use this local-patch shape:
 
 ```text
-请基于上一版重新生成。除本次修正项外，其余画面保持上一版不变。仅修正{失败层}：{具体失败点}。修正方式：{只写这一个失败点的动作}。不要重新设计其他已通过部分。
+{具体失败点}。{只写这一个失败点的直接动作}。其余内容不变。
 ```
 
 If an AI image generation tool is available and the user asked to generate an image, use the targeted correction prompt to regenerate one version. If regeneration is not available, output the targeted correction prompt for the user.
 
-When the failed layer is `商品层` and the generated product does not match the uploaded product image, prefer the fixed short correction prompt below instead of rewriting the original creative brief or expanding the failure details into a long patch prompt. In multi-product tasks, do not repair only one improved object while allowing other provided objects to drift; keep object-by-object fidelity and lock already-passed layout attributes.
+When the failed layer is `商品层` and the generated product does not match the uploaded product image, use the fixed short correction prompt below instead of rewriting the original creative brief or expanding the failure details into a long patch prompt. In multi-product tasks, check every object in QA, but submit only the specific product failure being corrected.
 
 ### Fixed Product Fidelity Correction
 
 Use this exact prompt when product-fidelity QA fails after comparing the generated product with the uploaded product image:
 
 ```text
-请基于上一版重新生成。除商品身份修正外，其余画面保持上一版不变。严格保留画布尺寸、整体构图、已通过商品的位置、大小、角度、前后层次、裁切边界、标题、副标题、装饰字、背景和光影不变。仅修正商品层：将每一个商品严格参照对应上传商品图重新渲染，分别修正外观、结构、颜色、比例和关键识别特征；不要只修其中一个商品，不要改动已通过商品的版式属性。
+以当前图为唯一编辑目标。仅将{商品}修正为对应上传素材的外观、结构、颜色和关键识别特征。其余内容不变。
 ```
+
+Targeted correction templates below are diagnosis references only. Before submitting any one of them to the image model, reduce it to `具体问题。唯一修改动作。其余内容不变。`.
 
 Targeted correction templates:
 

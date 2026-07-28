@@ -1,0 +1,52 @@
+{
+  "canvas": {"width": 2250, "height": 1125},
+  "brand": {"x": 722, "y": 212, "width": 806, "height": 102},
+  "date": {"x": 842, "y": 656, "width": 568, "height": 98},
+  "rule_button": {"x": 2148, "y": 376, "width": 102, "height": 170, "radius": 32},
+  "rule_text": {"x": 2172, "y": 390, "width": 66, "height": 140},
+  "wave": {"x": 0, "y": 1036, "width": 2250, "height": 89, "curve_height": 84},
+  "layout_coupling": {
+    "name": "标题与下方商品组联动主视觉",
+    "title_reference_box": {"x": 246, "y": 412, "width": 1760, "height": 324},
+    "title_reference_box_percent": {"left": "10.9%", "right": "89.1%", "top": "36.6%", "bottom": "65.4%"},
+    "title_visual_center_percent": "45%",
+    "title_visual_center_tolerance_percent": "±2%",
+    "brand_reservation": {"x": 722, "y": 212, "width": 806, "height": 102},
+    "date_reservation": {"x": 842, "y": 656, "width": 568, "height": 98},
+    "foreground_region": {"top": 788, "bottom": 1125},
+    "foreground_visible_region_percent": {"top": "72%", "bottom": "100%"},
+    "foreground_visible_top_max_y": 806,
+    "qa_rule": "毛笔标题与下方商品前景是同一主视觉骨架，必须在贴固定层前同时校验。标题按母版标题框的视觉位置、大小、基线和单行形状对齐，标题视觉中心保持在画面高度 45%（允许 ±2%），且不得与标识或日期预留区发生可见重叠；商品与金币必须进入下方主视觉区，商品最高可见点不得高于 foreground_visible_top_max_y。任一项失败都视为联动版式失败，不得只修标题或只修商品。"
+  },
+  "product_slots": {
+    "reference_image": "member-day-ai-reference.png",
+    "replacement_mode": "local_image_to_image",
+    "foreground_arrangement": {
+      "main_visual_region": "下方商品与前景金币整体限定在画面下方 30% 区域（画面高度 70% 至底边）；商品主体最高可见点不高于画面高度 72%，上方区域留给会员标识、毛笔标题和日期。",
+      "entry_rule": "商品组以母版的贴底、前后错落关系进入下方主视觉区。母版中手机只露出约一半，是因为下部自然被前景金币淹没并延伸至画布外，不是硬性裁切比例。根据实际商品尺寸、辨识度和下方主视觉区的层次需要决定是否局部出画：较小商品可完整露出；需要局部出画时，裁切/出画处必须由前景金币自然遮挡，不能形成生硬的画布切断。不要把每件商品机械地等比例裁成一半。",
+      "angle_rule": "各商品保持母版的轻微左右倾斜、三分之四视角与前后错位，不正对镜头平铺或等高并排。",
+      "visibility_rule": "以母版中最有辨识度的局部为准：手机优先露出摄像头和上半机身，手提包优先露出提手、包口和纹样，折叠设备优先露出上半机身、折叠轮廓和屏幕边缘；可见比例随槽位、商品尺寸和主视觉层次而定，不设统一裁切比例。"
+    },
+    "slot_assignment": {
+      "mode": "auto_shape_and_hierarchy",
+      "precedence": ["explicit_user_mapping", "auto_shape_and_hierarchy", "upload_order_as_tiebreak"],
+      "measurement": "以商品主体抠出后的可见轮廓判断，不以原始图片画布比例判断；高宽比 >= 1.15 视为竖型候选，宽高比 >= 1.15 视为扁型候选，其余视为近方形/异形。",
+      "rules": [
+        "先从竖型候选中选择识别度最高、上半部关键特征最适合露出的商品进入中间主槽；若没有竖型候选，则选择识别度和体积感最高的商品进入中间主槽。",
+        "扁型商品优先分配到左右侧槽；两个扁型商品同时存在时，较宽或较低矮者优先左侧前景槽，另一件进入右侧后景槽。",
+        "有两个或更多竖型商品时，仅一件进入中间主槽，其余优先进入右侧后景槽；不可形成正面平行的竖向排排站。",
+        "四件商品时，将最小、最紧凑或最适合局部露出的剩余商品放入右侧小槽；少于四件商品时右侧小槽继续保留母版小玩偶。",
+        "形态和识别度无法稳定判断时，才以上传顺序作为同优先级商品的决胜规则。"
+      ]
+    },
+    "slots": [
+      {"id": "phone", "upload_order": 1, "slot_role": "中间主槽，优先竖型主商品", "reference_subject": "中间橙色手机", "x": 928, "y": 832, "width": 226, "height": 293, "rotation_degrees": -8, "angle_description": "轻微向左倾斜，后仰式三分之四视角", "visible_focus": "背面摄像头与上半机身", "bottom_crop": "母版手机下部被前景金币淹没并延伸至画布外；替换品仅在主视觉层次需要时沿用这一处理，且由金币自然遮挡"},
+      {"id": "ipad", "upload_order": 2, "slot_role": "右侧后景槽，优先第二件扁型/近方形商品或第二竖型商品", "reference_subject": "右侧深色折叠设备", "x": 1132, "y": 806, "width": 303, "height": 319, "rotation_degrees": 8, "angle_description": "轻微向右倾斜，后仰式三分之四视角", "visible_focus": "上半机身、折叠轮廓与屏幕边缘", "bottom_crop": "可按主视觉层次让下部延伸至画布外；如出画，须与前景金币形成自然遮挡；较小商品可完整露出"},
+      {"id": "handbag", "upload_order": 3, "slot_role": "左侧前景槽，优先最扁、最宽的商品", "reference_subject": "左侧手提包", "x": 756, "y": 895, "width": 261, "height": 230, "rotation_degrees": -8, "angle_description": "轻微向左倾斜，位于手机前侧", "visible_focus": "提手、包口与上半包身纹样", "bottom_crop": "可按主视觉层次保留前景局部露出；如出画，裁切处须由前景金币自然遮挡；较小商品可完整露出"},
+      {"id": "small_toy", "upload_order": 4, "slot_role": "右侧小槽，仅四件商品时放入最小、最紧凑或最适合局部露出的剩余商品", "reference_subject": "右侧小玩偶", "x": 1389, "y": 943, "width": 111, "height": 182, "rotation_degrees": 0, "angle_description": "基本竖直，作为右侧陪衬", "visible_focus": "头部与上半身", "bottom_crop": "优先根据尺寸完整或大部露出；如需出画，须由前景金币自然遮挡"}
+    ],
+    "always_retained": ["coins"],
+    "partial_upload_behavior": "1-3 个商品时保留小玩偶和金币；未使用的商品槽位留空",
+    "default_foreground": "无商品素材时使用礼盒、丝带和金币"
+  }
+}

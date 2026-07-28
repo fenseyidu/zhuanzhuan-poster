@@ -25,6 +25,7 @@ background_recipe_id = bg_light_tech_product_space
 | format | `05_format_layouts.csv` | Ratio, reading flow, composition tendency, and safe area. |
 | game visual asset | `00_fields.csv`, `references/agent-workflow.md` | Infer game-related asset role before product relation and visual routing. |
 | visual preset path | `00_fields.csv`, `13_visual_preset_paths.csv`, `references/agent-workflow.md` | Optional user-facing B/A/S preset. Maps a business line + category + preset level into internal route factors, preferred background IDs, and a short route summary. Concrete visual language stays in background, product combination, and composition tables. |
+| membership composition | `references/membership-head-composition.md`, `assets/membership-head-template/` | A/S-only member-day 2:1 route: image-to-image base plus fixed code-drawn composition. |
 | consumer electronics A/S combination direction | `08_product_combinations.csv`, `references/agent-workflow.md` | Consumer-electronics-only internal route used after A/S preset matching. A resolves to one A-level combination direction; S resolves to one S-level combination direction, so the final prompt uses one concrete scene or topic direction. |
 | visual expression mode | `00_fields.csv`, `references/agent-workflow.md` | Optional high-level routing preference for stable support vs scene expression; influences combination, composition, and background. |
 | people participation | `00_fields.csv`, `references/agent-workflow.md` | Optional product presentation switch for whether people, hands, wearing, operation, or user interaction become part of the product combination; when set to yes, people visibly use the user-provided product. |
@@ -107,6 +108,8 @@ For the same product, sale vs recycle meaning is mainly determined by business l
 `13_visual_preset_paths.csv` is a user-facing shortcut layer for tested B/A/S routes. It should not duplicate product combination, composition, background, negative rule, or QA logic.
 
 Rows with an exact `category_id` apply to that category first. Rows with `category_id=cat_all` are business-line general preset routes used only when no exact category preset exists.
+
+`inherits_preset_id` is optional. When populated, inherit only the referenced visual route; retain the current row's business meaning and safety rules. It prevents membership B from duplicating the recycle B path while keeping membership separate from recycle semantics.
 
 Use it to record:
 

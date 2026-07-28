@@ -68,6 +68,7 @@ Routing order:
 1. If the user explicitly provides advanced test fields such as `视觉表达模式` or `人物参与`, use those values first.
 2. Else, if `visual_preset_level` is `B`, `A`, or `S`, first match `business_line_id + category_id + preset_level` in `13_visual_preset_paths.csv`; if no exact category row exists, match `business_line_id + cat_all + preset_level` as the business-line general preset.
 3. Expand the matched row into `visual_expression_mode`, `style_modifier`, `people_participation`, `preferred_background_ids`, and the short route summary in `expected_visual_result`.
+   - If `inherits_preset_id` is present, first resolve the referenced row's route factors. Keep the requesting business line's own business tone, prompt fragment, and negative rules; inherit only the visual route. `biz_membership + B` inherits `vp_recycle_all_b` in this visual-only way, so recycle service wording never enters a membership prompt.
 4. After the initial `people_participation` value is known, apply forced no-people overrides: any matched `B` preset route, or any multi-asset / multi-subject merchandise structure, resolves to `人物参与=否 / 无人物陈列` even if the user explicitly provides `人物参与=是`.
 5. If the matched preset is `biz_consumer_electronics / 消费电子` with preset `A` or `S`, resolve exactly one concrete combination direction from `08_product_combinations.csv` before final prompt assembly.
 6. Continue the original workflow: infer product relation, product combination, composition, and final background.
@@ -81,13 +82,19 @@ For the current v0.1 mapping, preset rows can be exact category rows or business
 
 `biz_recycle + cat_all` has B/A/S rows that all map to the same recycle B-level stable-support route. For recycle, do not create category-specific A/S scene or strong-topic behavior in v0.1. When the user provides B, A, or S for 回收, route through `bg_recycle_service_graphic / 回收_背景_弱中语境`, use `稳定承托`, `人物参与=否`, and treat the result as a simple, light-toned, trustworthy recycle poster with product-color inheritance and restrained information hierarchy. For this recycle background, the support surface is optional: use no platform/tabletop when possible, or at most one continuous tabletop/support surface; do not generate two or more separated podiums, round platforms, stone blocks, trays, or support blocks.
 
+`biz_membership + cat_membership_day` has a fixed member-day route. B inherits the recycle B visual route only. A is the membership 2:1 image-to-image base plus code composition route; S inherits A. In A/S, the approved member-day reference is the edit target. Its retained base is the warm-gold background, title box, lower foreground group, coins, small toy, overlap, perspective, and lighting; its editable content is the brush main title and supplied-product slots. On the first generation, constrain the product-and-coin main visual to the bottom 30% of the canvas (70% height to the bottom), with no product subject visibly higher than 72% height; reserve the upper area for the member-day mark, brush title, and date. Before replacement, use `template.json.product_slots.slot_assignment`: an explicit user mapping wins; otherwise determine each product's cut-out silhouette and hierarchy, putting the best portrait product in the center main slot and flat products in the side slots. Upload order is only the tiebreak. The lower foreground retains the reference's staggered product-group arrangement. The reference phone is partly visible because foreground coins submerge its lower portion before it continues outside the canvas; this is a compositional explanation, not a mandatory crop. Decide whether a replacement needs partial bottom-edge emergence from its size, recognizability, and the lower visual hierarchy; smaller products may be fully visible. When partial emergence is used, preserve its slot's visible focus, size, position, tilt direction, three-quarter view, front/back hierarchy, and lighting, and naturally hide the lower transition behind foreground coins. Do not crop every product to the same 50% ratio. Without supplied product assets, retain the reference foreground. With supplied product assets, use `assets/membership-head-template/template.json` 的 `product_slots` 作为唯一商品版式来源，形成原商品组版式内的局部图生图替换。金币保留；1-3 个商品时保留小玩偶和金币，未使用的商品槽位留空；四个商品时替换全部槽位。More than four assets is a blocking input error: ask the user to keep at most four products before generating. Composite the supplied member-day mark, date subtitle, adaptive rule badge, and adaptive bottom wave afterwards. The member-day mark, date subtitle, adaptive rule badge, and adaptive bottom wave are compositor layers.
+
+Before writing the membership A/S final prompt, build `slot_replacement_map` from every active `product_slots` row: `reference_subject → actual_upload_order + visible_product_description`. Write every mapping explicitly into the final prompt in template slot order; a bare slot ID, an unordered product list, or a generic “按上传顺序替换” statement is insufficient. Default mapping follows `template.json.product_slots.slot_assignment`: determine the cut-out silhouette and hierarchy, place the best portrait product in the center main slot, and place flat products in the side slots. Use upload order only as a tiebreak; an explicit user mapping to a named `reference_subject` overrides it and must be recorded in review Markdown. Use only visually safe product descriptions and do not invent brand, model, price, or parameter facts.
+
+After every A/S AI-base generation, compare it directly with the approved member-day reference before compositing. This mandatory preflight does not apply to membership B. The comparison scope is the coupled brush-title box and lower product-and-coin foreground: title position, height, width, baseline, and single-line shape; each product slot's visible height, scale, angle, bottom crop, front/back hierarchy, and overlap; and the foreground top boundary. When any item mismatches, record one `主视觉联动版式失败` and make one joint targeted image edit using the generated image as the edit target; do not repair title and lower foreground separately.
+
 `cat_collectible_toy` and `cat_game` under `biz_n_category` have confirmed B/A/S rows:
 
 | preset | Tested route | Expected result |
 |-|-|-|
 | `B` | `稳定承托` + no strong flat/3D modifier + `人物参与=否` | stable collectible-toy product display |
-| `A` | `场景表达` + flat modifier + `人物参与=否` | flat collectible-toy topic layout |
-| `S` | `场景表达` + no strong flat/3D modifier + `人物参与=否` | collectible-toy topic display with flat-background plus light 3D space |
+| `A` | `场景表达` + 手帐纸艺平面 modifier + `人物参与=否` + 撕纸标题区、浅绿网格便签、顶部圆环夹、纸胶带、少量贴纸和虚线涂鸦 | journal-style paper-craft collectible-toy topic layout |
+| `S` | `场景表达` + no strong flat/3D modifier + `人物参与=否` + fixed torn-paper edges | collectible-toy topic display with flat-background plus light 3D space |
 
 Game preset rows are only for N-category game character and role illustration assets:
 
@@ -282,7 +289,14 @@ For `biz_consumer_electronics / 消费电子`:
 
 Consumer-electronics lighting strategy should be concrete and visible, not vague cool technology color. Choose one according to product, title, season, assets, and references: light strong-contrast, dark strong-contrast, natural window light, side/back light, brand/product main-color strong lighting, or neutral material light. Also randomly choose one or two consumer-electronics photography modifiers and include them in the final prompt and review Markdown: 奢华编辑照明、高对比度影棚照明、窄聚光光束、戏剧性阴影衰减、高端杂志广告风格、电影级产品摄影. If consumer electronics uses a shared background such as `bg_lifestyle_scene_soft`, `bg_travel_camera_scene`, `bg_graphic_operation`, or `bg_clean_gradient_product`, do not modify the shared background recipe itself; modulate it through the selected consumer-electronics lighting strategy, material detail, and an advertising design layer. Real-scene routes should include clear light direction, light/shadow cuts, ordered props, light information modules, product edge highlights, contact shadows, or miniature spatial storytelling, instead of a plain photographic scene.
 
-For `cat_collectible_toy`, resolve three visual directions from supplement and visual expression mode:
+For `cat_collectible_toy`, resolve three visual directions from supplement and visual expression mode. When an A preset is matched, use the journal-style paper-craft route below as the default flat direction:
+
+- Build one continuous paper-craft layout with a torn-paper title area on the left and a pale-green grid memo on the right.
+- Place a top ring binder and a small piece of paper tape on the memo, then add sparse stickers and dotted doodle lines as the finish layer.
+- Use a warm cream-white and pale-grass-green paper palette, allowing the supplied toy colors to become the accent colors.
+- Place one toy or a small toy group on the grid memo as clear white-edge cutouts; for multiple toys, establish light primary/support hierarchy through size and overlap.
+
+All collectible-toy title routes use rounded, friendly modern display typography with a front-facing flat baseline and stable solid color. Do not use outlines, shadows, 3D lettering, metallic effects, or gradient title effects. Collectible-toy routes never select `bg_new_arrival_stage / 新品发布_商品高光_中语境`, including when the marketing type is `m_new_arrival / 新品上新`; use `bg_product_podium / 通用_商品展台_价值陈列_弱中语境` for stable display, or `bg_collectible_flat_collage / 潮玩_平面拼贴专题_中语境` and `bg_content_topic_flat_3d / 潮玩_平面立体融合_中语境` according to the resolved topic direction.
 
 | cue | preferred combination | preferred background |
 |-|-|-|
@@ -292,7 +306,7 @@ For `cat_collectible_toy`, resolve three visual directions from supplement and v
 
 Collectible-toy element discipline:
 
-- 平面风: choose 1-2 flat visual element families, such as torn paper plus stickers, color blocks plus small cards, or sticker frames plus hand-drawn marks. Keep the card/frame language unified.
+- 平面风: choose 1-2 flat visual element families, such as torn paper plus stickers, color blocks plus small cards, or grid memo plus paper tape. Keep the paper-craft language unified; use dotted doodle lines as the only drawing-like finish layer.
 - 场景表达 without flat/3D supplement: use flat topic background plus light 3D display. Choose 1-2 flat element families and 1 main display support, with at most 1 auxiliary support.
 - 立体风: use one clean cute 3D display space, such as a gift-window, collection shelf, soft podium, or small toy display area. Keep props and supports in one visual language.
 - In all three directions, product hierarchy comes first: one product or small group can lead, supporting toys stay companion-like, and decoration only builds topic feeling.
