@@ -8,16 +8,16 @@
   "title_layer": {
     "style_reference": "member-day-title-style-reference.png",
     "base_reference": "source/member-day-background-master.png",
-    "box": {"x": 244, "y": 360, "width": 1760, "height": 324},
-    "visible_height": 250,
+    "box": {"x": 244, "y": 350, "width": 1760, "height": 324},
+    "visible_height": 280,
     "asset_requirement": "标题专用生图完成后必须提供透明背景的 PNG；只保留毛笔字，不得包含暖金背景、商品、会员标识、日期、规则或底波浪。合成器会按可见 alpha 内容裁切后等比缩放并居中，禁止把整张源画布强制拉伸至标题框。",
     "color_behavior": "合成器只使用标题 PNG 的 alpha 通道，并从标题框下方 AI 底图采样生成有足够对比的深暖金色；用户可用 title-color 覆盖。",
     "size_behavior": "可见标题高度固定为 visible_height；宽度由裁切后的 alpha 内容等比自适应，禁止强制填满 box.width。"
   },
   "layout_coupling": {
     "name": "标题层与下方商品组最终合成版式",
-    "title_reference_box": {"x": 244, "y": 360, "width": 1760, "height": 324},
-    "title_reference_box_percent": {"left": "10.9%", "right": "89.1%", "top": "32.0%", "bottom": "60.8%"},
+    "title_reference_box": {"x": 244, "y": 350, "width": 1760, "height": 324},
+    "title_reference_box_percent": {"left": "10.9%", "right": "89.1%", "top": "31.1%", "bottom": "59.9%"},
     "title_visual_center_percent": "45%",
     "title_visual_center_tolerance_percent": "±2%",
     "brand_reservation": {"x": 722, "y": 232, "width": 806, "height": 102},

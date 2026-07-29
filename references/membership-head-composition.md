@@ -24,7 +24,7 @@ The final canvas is `2250x1125` and has three stages:
 
 Do not generate a title-and-product base and then erase the title. The MasterGo `bg` export is the title-free edit target/reference from the outset.
 
-The lower product-and-coin visual stays in the bottom 30% (`y=788` to `1125`); no product subject may have a visible point above `y=806`. MasterGo `119:1428` provides the original title box at `(244,380,1760,324)`; the active local template uses title `y=360` with a fixed visible height of `250`, while retaining the member-day mark at `(722,232,806,102)` and date box at `(842,670,568,98)`. Its visible ink must stay clear of the future member-day mark and date reservations.
+The lower product-and-coin visual stays in the bottom 30% (`y=788` to `1125`); no product subject may have a visible point above `y=806`. MasterGo `119:1428` provides the original title box at `(244,380,1760,324)`; the active local template uses title `y=350` with a fixed visible height of `280`, while retaining the member-day mark at `(722,232,806,102)` and date box at `(842,670,568,98)`. Its visible ink must stay clear of the future member-day mark and date reservations.
 
 The product slots, assignment rules, partial bottom emergence, coins, and small-toy handling in `template.json.product_slots` remain unchanged. With 1–3 supplied products retain the small toy and coins; with four products replace all four slots; stop and ask the user to reduce any selection over four products.
 
@@ -36,7 +36,7 @@ For a fixed campaign title, skip title generation and use the approved transpare
 
 ## Title Asset Placement
 
-The renderer must use the title PNG's alpha channel only. First crop to its non-transparent alpha bounds, then set its visible height exactly to `title_layer.visible_height`; derive its width proportionally from its visible alpha bounds and center it. The current approved default is `visible_height=250` and `title_layer.box.y=360`. Do not resize the complete source canvas directly to the title box or force a title to fill the fixed width: title-only images often contain unequal transparent padding, and non-uniform source-to-box scaling visibly compresses or widens brush strokes. Reject an asset with no visible alpha content.
+The renderer must use the title PNG's alpha channel only. First crop to its non-transparent alpha bounds, then set its visible height exactly to `title_layer.visible_height`; derive its width proportionally from its visible alpha bounds and center it. The current approved default is `visible_height=280` and `title_layer.box.y=350`. Do not resize the complete source canvas directly to the title box or force a title to fill the fixed width: title-only images often contain unequal transparent padding, and non-uniform source-to-box scaling visibly compresses or widens brush strokes. Reject an asset with no visible alpha content.
 
 ## Renderer
 
