@@ -116,17 +116,25 @@ For `biz_n_category + cat_collectible_toy`, write these fixed preset details int
 
 ## Membership A/S 2:1 Image-to-Image Prompt
 
-When `business_line_id=biz_membership`, `category_id=cat_membership_day`, `format_id=fmt_landscape_2_1`, and preset level is `A` or `S`, the supplied member-day reference image is the edit target. The final prompt defines its retained base and editable content, then describes the local title and product-slot replacements.
+When `business_line_id=biz_membership`, `category_id=cat_membership_day`, `format_id=fmt_landscape_2_1`, and preset level is `A` or `S`, run two distinct image tasks. The saved title-free MasterGo background master is the AI-base edit target; the saved brush-title PNG is a typography reference for a title-only task. Do not use a title-and-product image as the base and do not erase a generated title afterwards.
 
-Use this compact structure, replacing the bracketed values with the current task values:
+Use this AI-base prompt structure, replacing bracketed values with current task values:
 
 ```text
-以输入会员日母版为唯一编辑目标。画面保留层包括：原画布比例、暖金背景、下方商品组贴底位置、商品间重叠关系、金币、小玩偶、透视、光影与阴影。下方商品与前景金币整体限定在画面下方 30% 区域（画面高度 70% 至底边），商品主体最高可见点不高于画面高度 72%，上方区域留给会员标识、毛笔标题和日期；这是首次生图即执行的构图约束。母版手机仅露出约一半，是因为下部被前景金币淹没后延伸至画布外，不是硬性裁切规则。下方商品组保持母版的错落层次；根据实际商品尺寸、辨识度和下方主视觉区需要，较小商品可以完整露出。若某商品需要自底边局部出画，必须由前景金币自然遮挡裁切/出画处，不能形成生硬切断；不将每件商品机械地裁成相同的半露比例。每个商品呈现对应槽位原有的可见重点。
-
-编辑层包括：将原有毛笔主标题替换为「{main_title}」，保持单行排版、颜色与毛笔质感；标题可见笔墨的视觉中心固定在画面高度 45%。下方固定槽位必须按以下“母版原对象 → 上传商品”逐项局部替换，禁止仅按槽位编号描述、交换对应关系或重新排布商品：{slot_replacement_map}。每件商品严格继承其对应母版原对象的大小、位置、倾斜方向与三分之四视角、前后层级、可见重点和光影关系；是否底部出画按商品尺寸、辨识度和下方主视觉层次决定，出画时用前景金币自然遮挡过渡，并保持对应上传商品的外观、颜色、结构、屏幕/取景画面和可见品牌标识可辨；{foreground_description}。
+以输入的无标题会员日暖金母版为唯一编辑目标。保留原画布比例、连续暖金背景、下方商品组贴底位置、商品间重叠关系、金币、小玩偶、透视、光影与阴影；标题框、会员标识、日期、规则和底波浪区域保持干净。下方商品与前景金币整体限定在画面下方 30% 区域，商品主体最高可见点不高于画面高度 72%。下方固定槽位必须按以下“母版原对象 → 上传商品”逐项局部替换：{slot_replacement_map}。每件商品严格继承对应槽位的大小、位置、倾斜方向、三分之四视角、前后层级、可见重点和光影关系；{foreground_description}。AI 底图中不要生成主标题、会员日标识、日期、副标题、规则按钮、规则文字、底部波浪；海报场景中不要新增人物、手部、礼盒、卡片、价格、折扣、排名、服务承诺、第三方会员卡；但上传商品自身的屏幕、取景器或显示窗中原有的人像、场景或界面属于商品外观，必须保留。
 ```
 
-Build `{slot_replacement_map}` from `template.json.product_slots` in slot order, after applying `slot_assignment`. Each supplied asset must be written as `{reference_subject} 槽位替换为第 {actual_upload_order} 张{visible_product_description}`. The automatic mapping classifies the cut-out product silhouette and hierarchy: portrait products preferentially enter the center main slot, flat products preferentially enter the two side slots, and upload order resolves only otherwise identical candidates. `reference_subject` comes only from the matching template row; `visible_product_description` uses only safely visible category, color, and appearance traits from that uploaded image, without inventing a brand, model, price, or parameter. Never substitute a generic phrase such as `槽位 1 为商品 1`. If the user explicitly maps an uploaded asset to a named reference subject, use that mapping instead of automatic assignment and record the override in review Markdown.
+The separate title-only task treats `member-day-title-style-reference.png` as a reference-image text-replacement target, rather than a typography mood reference. For the bundled default reference, submit this prompt exactly, replacing only `{main_title}`:
+
+```text
+使用图1作为参考图，将图中的“狂欢开启 惊喜到周末”改为“{main_title}”。
+标题必须完整、清晰、正视、横向单行，无其他文字、无标识、无日期、无商品、无装饰。
+将标题置于完全纯色 #00FF00 绿色背景中央，背景只能是单一无纹理无阴影的绿色，便于后续抠图；标题本身不得使用绿色。
+```
+
+For a user-supplied title reference, replace the first quoted string with the visible title copy in that reference. Do not add style descriptors such as `厚重`、`流动`、`有力量`、`行书`、`毛笔节奏`, because they make the model reinterpret and alter the reference strokes. Convert the result to a transparent title PNG before composition. It is not submitted as another untyped image alongside an AI-base retry.
+
+Build `{slot_replacement_map}` from `template.json.product_slots` in slot order, after applying `slot_assignment`. Each supplied asset must be written as `{reference_subject} 槽位替换为第 {actual_upload_order} 张{visible_product_description}`. When an asset has a visible screen, viewfinder, or display window, `visible_product_description` must also state that its original screen content is retained; this includes an original person, scene, or interface. The automatic mapping classifies the cut-out product silhouette and hierarchy: portrait products preferentially enter the center main slot, flat products preferentially enter the two side slots, and upload order resolves only otherwise identical candidates. `reference_subject` comes only from the matching template row; `visible_product_description` uses only safely visible category, color, and appearance traits from that uploaded image, without inventing a brand, model, price, or parameter. Never substitute a generic phrase such as `槽位 1 为商品 1`. If the user explicitly maps an uploaded asset to a named reference subject, use that mapping instead of automatic assignment and record the override in review Markdown.
 
 `foreground_description` reads `template.json.product_slots`; the template is the only fixed-slot source:
 
@@ -139,33 +147,15 @@ Build `{slot_replacement_map}` from `template.json.product_slots` in slot order,
 | 4 | assets 1-4 occupy all template slots; retain coins |
 | more than 4 | stop before generation and ask the user to keep at most four products |
 
-With supplied assets, use the template's `partial_upload_behavior`. The resulting foreground keeps the reference image's original product composition as a set of local substitutions. The warm-gold background, title box, product-group silhouette, coins, small toy, and bottom-edge crop stay in the retained base.
+With supplied assets, use the template's `partial_upload_behavior`. The resulting foreground keeps the reference image's original product composition as a set of local substitutions. The warm-gold background, product-group silhouette, coins, small toy, and bottom-edge crop stay in the retained base. The member-day mark, date subtitle, rule button, rule text, and bottom wave are fixed compositor layers.
 
-The member-day mark, date subtitle, rule button, rule text, and bottom wave are fixed layers added by the membership compositor after generation. The title is the only newly generated readable AI-base text; existing text and imagery in user-supplied product screens, viewfinders, or display windows are part of product identity and are not restricted by this rule. `S` inherits this same prompt route from `A`.
+## Membership A/S 2:1 Independent QA And Targeted Edit
 
-Always append this restriction to the final membership A/S image-generation prompt: `AI 底图中不要生成会员日标识、日期、副标题、规则按钮、规则文字、底部波浪；不要人物、手部、礼盒、卡片、价格、折扣、排名、服务承诺、第三方会员卡。`
+Check the title-free base first: no title/fixed layers, products and coins remain in `foreground_region`, every supplied product stays in its named slot, and the staggered foreground holds. A failure uses a product/base-only targeted edit.
 
-## Membership A/S 2:1 Joint-Layout Preflight And Targeted Edit
+Check the title PNG second: exact title copy, usable transparency, brush style, title-box fit, and no brand/date collision. A failure regenerates only the title asset; never ask the product-base model to rewrite it.
 
-After generating the AI base, compare it with the approved member-day reference before code composition. Read `template.json.layout_coupling` as the single QA contract. The brush title and lower product-and-coin group are one coupled main visual, not two independently repairable modules. Run this joint preflight in one pass:
-
-- title: position, height, width, baseline, and single-line shape; its visible-ink visual center must align to 45% canvas height, and its visible ink must not overlap the future brand or date reservation;
-- lower foreground: all products and coins remain inside `foreground_region`, no product visibly exceeds `foreground_visible_top_max_y`, and the group keeps its staggered hierarchy;
-- each supplied product: assigned slot, visible height, scale, angle, bottom crop, front/back hierarchy, and overlap.
-
-If any item fails, classify the whole result as `主视觉联动版式失败`. Do not compose fixed layers, and do not repair title and product group in separate calls.
-
-When one item differs, use the current generated image as the edit target and submit one compact correction instruction. If the editing capability cannot explicitly assign image roles, submit no image other than the current generated image: the member-day reference is for QA and measurement only, never an untyped retry input. It normally contains the edit scope, one direct correction action, and `其余内容不变`. For measurable position, scale, crop, or fixed-slot drift, keep the failure statement in QA notes and submit only one direct geometric action; a combined scale-and-translate instruction is one geometry action. Use a relative canvas region or the member-day reference slot as the measurement target, but do not ask the model to “restore the reference image” or “replace with the mother-layout objects”. Do not enumerate preserved size, position, angle, layer order, crop, light, material, or identity attributes in the submitted instruction; record those in QA notes instead.
-
-Joint-layout correction instruction:
-
-```text
-仅调整毛笔主标题和下方商品前景组：将单行毛笔标题的可见笔墨视觉中心精确置于画面高度 45%，保持当前文案不变。以画布底边作为固定裁切线和缩放锚点，将当前已从底边探出的整组商品等比缩小，使商品组在画布内的可见部分仅位于下方 28% 区域（画面高度 72% 至底边）。缩放后，保持当前商品的相对位置、倾斜角度、前后遮挡和可见重点不变；金币继续位于商品前方并自然遮挡商品下缘。其余内容不变。
-```
-
-This is one coupled geometry action, not two correction actions. Use it whenever any title, product-region, slot-geometry, or title/fixed-layer-reservation check fails. The current generated image is the only retry input unless the editing capability can explicitly distinguish it as the edit target and the approved member-day reference as a composition reference. Never submit the member-day reference as an untyped extra retry image. Record the specific failing measurements in QA notes, not in the submitted correction prompt. The fixed 45% title-center anchor and product-region rule are the canonical user-facing form of `template.json.layout_coupling`; do not replace this instruction with an abstract “回到标题框” or “下移商品组” description.
-
-For membership A/S 2:1 heads, only a joint-layout PASS may proceed to fixed-layer composition. After composition, check that the generated brand, date, rule button, and bottom wave are readable and have no visible collision with the AI brush title or lower foreground; any collision is a final `合成碰撞失败` and cannot be marked PASS.
+Only after both pass, invoke the compositor. If any title/product/fixed-layer collision appears in the completed image, mark `合成碰撞失败`.
 
 If advanced test fields are explicitly provided, they override the matched preset route unless a forced no-people rule applies. Record this in review Markdown:
 

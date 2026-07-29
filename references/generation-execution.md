@@ -105,6 +105,7 @@ Use this structure:
 标签：{label_text_or_无}
 主标题：{main_title}
 副标题：{subtitle_or_无}
+标题风格参考：{title_style_reference_or_会员 A/S 使用内置 MasterGo 参考}
 装饰字：{decorative_text_or_无}
 视觉方案档位：{visual_preset_level_or_自动}（可选：自动 / B / A / S）
 高级测试字段：{visual_expression_mode_and_people_participation_if_explicit_or_无}

@@ -2,46 +2,59 @@
 
 Use this only for `biz_membership` A/S 2:1 heads. It never applies to `会员` B.
 
+## MasterGo Source Assets
+
+The only layout source is `195067020342135 / 119:1428`. The required exports are now saved with the template:
+
+| MasterGo layer | Saved asset | Purpose |
+|---|---|---|
+| `bg` / `119:0943` | `source/member-day-background-master.png` | title-free warm-gold background and lower-foreground composition reference for the AI base |
+| `Clipboard_Screenshot_1785289995` / `126:1588` | `member-day-title-style-reference.png` | title-only brush-lettering style reference; it is an RGBA image, not an editable font |
+| `Clipboard_Screenshot_1785134069` / `119:1743` | `member-day-brand-mask.png` | fixed member-day mark alpha mask |
+
+The source title reference reads `狂欢开启 惊喜到周末`. It is never copied into a task with a different main title. It is used only as the style reference for a dedicated title-only generation.
+
 ## Layer Contract
 
-The AI base is `2250x1125` and contains only the brush main title, lower foreground, coins, and continuous premium material background. Use image-to-image from the approved member-day reference to preserve the coupled title-and-lower-subject composition. In both initial generation and targeted regeneration, define the brush title by one geometric anchor only: the visible ink's visual center is fixed at height 45% of the canvas. Do not provide a title-box coordinate range to the image model. Before any fixed-layer composition, read `template.json.layout_coupling` and run its joint preflight: title position/size/baseline/single-line shape/vertical center and the lower product-and-coin group must pass together. In the initial generation, constrain the product-and-coin main visual to the bottom 30% of the canvas (`y=788` to `1125`); no product subject may have a visible point above `y=806` (about 72% height, matching the highest product slot). This reserves the upper area for the member-day mark, brush title, and date, and it must leave the fixed-layer zones clean. If either title or foreground fails, treat the whole main visual as a single layout failure; do not compose fixed layers or repair the two regions independently.
+The final canvas is `2250x1125` and has three stages:
 
-Without supplied product assets, the lower foreground defaults to generic gift boxes, ribbons, and coins. With supplied product assets, use `template.json` 的 `product_slots` as the single source of truth. Assign assets using `slot_assignment`: an explicit user mapping wins; otherwise classify the cut-out subject silhouette and product hierarchy, with portrait products preferentially entering the center main slot and flat products preferentially entering the two side slots. Upload order only resolves a tie. Each assigned product is a local image-to-image replacement for its matching slot and inherits the reference subject's size, center, angle, layer order, and lighting relationship. The lower group follows the reference's staggered, layered arrangement, not a complete front-facing lineup. In the reference, the phone appears half exposed because its lower part is submerged behind foreground coins and continues outside the canvas; this explains the mother-layout treatment and does not impose a fixed crop ratio. Decide whether a replacement needs partial bottom-edge emergence from its size, recognizability, and the lower visual hierarchy; smaller products may remain fully visible. If partial emergence is used, hide the transition naturally behind foreground coins rather than leaving a hard crop. Keep each slot's own visible focus; coins remain. With 1-3 assets, retain the small toy and coins; unused product slots remain empty. With four assets, replace all four slots. Do not accept more than four assets: ask the user to reduce the selection before generation.
+1. **AI base** — warm-gold material background, lower product group, coins, small toy, perspective, lighting, and shadows. The title area is clean and contains no readable title, member-day mark, date, rule control, or bottom wave.
+2. **Title-only asset** — a title-specific image-generation result, delivered as a transparent PNG with only the approved brush title. The compositor places it into `template.json.title_layer.box` and derives a deep warm-gold tint from the AI base unless an explicit approved color is supplied.
+3. **Fixed layers** — member-day mark, date, rule button/text, and bottom wave, drawn by the compositor.
 
-Use the MasterGo source `195067020342135 / 119:1428` as the only layout source. Its logical coordinates are doubled for the 2250x1125 output: top member-day mark `(722,212,806,102)`, brush-title reference box `(246,412,1760,324)`, date `(842,656,568,98)`, lower foreground reference box `(484,832,1284,294)`, rule button `(2148,376,102,170)`, rule text `(2172,390,66,140)`, and bottom wave `(0,1036,2250,89)`.
+Do not generate a title-and-product base and then erase the title. The MasterGo `bg` export is the title-free edit target/reference from the outset.
 
-| Layer | Source | Color behavior |
-|-|-|-|
-| member-day mark | `member-day-brand-mask.png` | fixed shape; renderer derives its color from the AI base |
-| date subtitle | renderer text | renderer uses the same derived color as the member-day mark |
-| rule text | renderer text | choose light text for a dark button; choose dark text for a light button |
-| rule-button background | renderer left-rounded, right-square rectangle | derive a readable shade from the local AI background; its right edge is flush with the canvas |
-| bottom wave | renderer curve | derive a harmonious fill from the lower AI background |
+The lower product-and-coin visual stays in the bottom 30% (`y=788` to `1125`); no product subject may have a visible point above `y=806`. MasterGo `119:1428` provides the original title box at `(244,380,1760,324)`; the active local template uses title `y=360` with a fixed visible height of `250`, while retaining the member-day mark at `(722,232,806,102)` and date box at `(842,670,568,98)`. Its visible ink must stay clear of the future member-day mark and date reservations.
 
-Do not use the red review boxes from the reference as production elements.
+The product slots, assignment rules, partial bottom emergence, coins, and small-toy handling in `template.json.product_slots` remain unchanged. With 1–3 supplied products retain the small toy and coins; with four products replace all four slots; stop and ask the user to reduce any selection over four products.
 
-## Required Source Asset
+## Title-only Generation Contract
 
-Use the saved MasterGo `member-day-brand-mask.png` by default. The renderer uses only its alpha channel, then applies a color that contrasts with the AI base. It is not reconstructed from a screenshot. Replace it only with an approved export when the source mark shape changes.
+For a changing title, pass the saved `member-day-title-style-reference.png` as a reference-image text-replacement target and generate the exact user-provided main-title text in a separate title-only task. For the bundled default reference, use `将图中的“狂欢开启 惊喜到周末”改为“{main_title}”`; do not describe the brush style independently. The desired output is one readable horizontal line, contains no other copy or objects, and has a transparent background after chroma-key removal. The exact text and brush treatment remain subject to title QA; the reference is not a font and cannot guarantee a literal stroke-for-stroke copy.
+
+For a fixed campaign title, skip title generation and use the approved transparent title PNG directly. Never use the style-reference PNG itself as a replacement title unless its visible words exactly equal the requested main title.
+
+## Title Asset Placement
+
+The renderer must use the title PNG's alpha channel only. First crop to its non-transparent alpha bounds, then set its visible height exactly to `title_layer.visible_height`; derive its width proportionally from its visible alpha bounds and center it. The current approved default is `visible_height=250` and `title_layer.box.y=360`. Do not resize the complete source canvas directly to the title box or force a title to fill the fixed width: title-only images often contain unequal transparent padding, and non-uniform source-to-box scaling visibly compresses or widens brush strokes. Reject an asset with no visible alpha content.
 
 ## Renderer
 
 ```text
 python3 assets/membership-head-template/membership_head_renderer.py \
-  --base-image <ai-base.png> \
+  --base-image <ai-base-without-title.png> \
+  --title-asset <approved-title-only.png> \
   --date-text <date-copy> \
   --output <final.png>
 ```
 
-Use `--brand-color #RRGGBB` only when a campaign needs an approved explicit mark/date color; otherwise let the renderer derive it from the AI base.
+Use `--title-color #RRGGBB` only for an approved campaign color. Use `--brand-color #RRGGBB` only when the member-day mark/date also need an approved explicit color; otherwise both colors are derived from their local AI-base areas.
 
 ## QA
 
-- Before every A/S composition, without exception, run the `layout_coupling` joint preflight. The title's visible ink follows the reference title box and does not collide with the future brand/date reservations; the lower foreground is within the required region, and no product exceeds the required top boundary. Any failure blocks composition and uses one joint-layout correction on the current AI base.
-- The AI base has no duplicate fixed mark, date, rule badge, rule text, or bottom wave.
-- The brush main title and lower foreground keep the reference composition while allowing local product replacement.
-- Each replacement inherits its slot's size, center, angle, layer order, lighting relationship, and visible focus. The product group must retain its staggered, overlapping three-quarter arrangement; no front-facing parallel arrangement or equal-ratio half crop. A bottom-edge emergence/crop is optional, based on the replacement's size, recognizability, and the lower visual hierarchy; when used, foreground coins must naturally conceal the cropped/extended lower portion. Smaller products may be fully visible. For 1-3 supplied products, the lower foreground contains the supplied products, the retained small toy, and coins; for four, it contains the four supplied products and coins.
-- Rule text remains readable: dark button -> light text; light button -> dark text.
-- The rule button has rounded left corners and square right corners, with its right edge flush to the canvas.
-- The bottom wave separates from, but harmonizes with, the generated lower background.
-- After composition, the brand, date, rule button, and bottom wave are readable and do not visibly collide with the brush title or lower foreground. A collision is `合成碰撞失败`, not a PASS.
+Before composition, run two independent checks:
+
+- **AI-base product check:** the base contains no readable title or fixed layers; lower products, coins, slots, overlap, and top boundary satisfy `template.json.product_slots` and `foreground_visible_top_max_y`.
+- **Title-asset check:** title text exactly matches the user copy, the PNG has usable transparency, the brush style is approved, its visible alpha is proportionally scaled (same horizontal and vertical scale), and its content fits `title_layer.box` without colliding with the mark/date reservations.
+
+Then run one final composition check: title, lower product group, member-day mark, date, rule button/text, and bottom wave are readable, harmonious, and non-overlapping. A title-only failure retries the title asset; a product-layout failure retries only the current AI base. A final collision is `合成碰撞失败`.

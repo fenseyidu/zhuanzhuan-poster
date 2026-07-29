@@ -1,25 +1,35 @@
 {
   "canvas": {"width": 2250, "height": 1125},
-  "brand": {"x": 722, "y": 212, "width": 806, "height": 102},
-  "date": {"x": 842, "y": 656, "width": 568, "height": 98},
+  "brand": {"x": 722, "y": 232, "width": 806, "height": 102},
+  "date": {"x": 842, "y": 670, "width": 568, "height": 98},
   "rule_button": {"x": 2148, "y": 376, "width": 102, "height": 170, "radius": 32},
   "rule_text": {"x": 2172, "y": 390, "width": 66, "height": 140},
-  "wave": {"x": 0, "y": 1036, "width": 2250, "height": 89, "curve_height": 84},
+  "wave": {"x": 0, "y": 1036, "width": 2250, "height": 90, "curve_height": 84},
+  "title_layer": {
+    "style_reference": "member-day-title-style-reference.png",
+    "base_reference": "source/member-day-background-master.png",
+    "box": {"x": 244, "y": 360, "width": 1760, "height": 324},
+    "visible_height": 250,
+    "asset_requirement": "标题专用生图完成后必须提供透明背景的 PNG；只保留毛笔字，不得包含暖金背景、商品、会员标识、日期、规则或底波浪。合成器会按可见 alpha 内容裁切后等比缩放并居中，禁止把整张源画布强制拉伸至标题框。",
+    "color_behavior": "合成器只使用标题 PNG 的 alpha 通道，并从标题框下方 AI 底图采样生成有足够对比的深暖金色；用户可用 title-color 覆盖。",
+    "size_behavior": "可见标题高度固定为 visible_height；宽度由裁切后的 alpha 内容等比自适应，禁止强制填满 box.width。"
+  },
   "layout_coupling": {
-    "name": "标题与下方商品组联动主视觉",
-    "title_reference_box": {"x": 246, "y": 412, "width": 1760, "height": 324},
-    "title_reference_box_percent": {"left": "10.9%", "right": "89.1%", "top": "36.6%", "bottom": "65.4%"},
+    "name": "标题层与下方商品组最终合成版式",
+    "title_reference_box": {"x": 244, "y": 360, "width": 1760, "height": 324},
+    "title_reference_box_percent": {"left": "10.9%", "right": "89.1%", "top": "32.0%", "bottom": "60.8%"},
     "title_visual_center_percent": "45%",
     "title_visual_center_tolerance_percent": "±2%",
-    "brand_reservation": {"x": 722, "y": 212, "width": 806, "height": 102},
-    "date_reservation": {"x": 842, "y": 656, "width": 568, "height": 98},
+    "brand_reservation": {"x": 722, "y": 232, "width": 806, "height": 102},
+    "date_reservation": {"x": 842, "y": 670, "width": 568, "height": 98},
     "foreground_region": {"top": 788, "bottom": 1125},
     "foreground_visible_region_percent": {"top": "72%", "bottom": "100%"},
     "foreground_visible_top_max_y": 806,
-    "qa_rule": "毛笔标题与下方商品前景是同一主视觉骨架，必须在贴固定层前同时校验。标题按母版标题框的视觉位置、大小、基线和单行形状对齐，标题视觉中心保持在画面高度 45%（允许 ±2%），且不得与标识或日期预留区发生可见重叠；商品与金币必须进入下方主视觉区，商品最高可见点不得高于 foreground_visible_top_max_y。任一项失败都视为联动版式失败，不得只修标题或只修商品。"
+    "qa_rule": "AI 商品底图不得包含任何主标题；标题专用 PNG 由合成器固定放入 title_layer.box。先校验商品与金币进入下方主视觉区，商品最高可见点不得高于 foreground_visible_top_max_y；再校验标题 PNG 在标题框内完整可读，且不与标识或日期预留区重叠。最终合成时同时检查标题、商品和固定层的碰撞；标题或商品失败可以分别修正，固定层贴入前不通过最终版式检查。"
   },
   "product_slots": {
     "reference_image": "member-day-ai-reference.png",
+    "base_reference_image": "source/member-day-background-master.png",
     "replacement_mode": "local_image_to_image",
     "foreground_arrangement": {
       "main_visual_region": "下方商品与前景金币整体限定在画面下方 30% 区域（画面高度 70% 至底边）；商品主体最高可见点不高于画面高度 72%，上方区域留给会员标识、毛笔标题和日期。",

@@ -34,6 +34,22 @@ def paste_tinted_mask(canvas, source, box, color):
     image.putalpha(alpha)
     canvas.alpha_composite(image, (box['x'], box['y']))
 
+def paste_tinted_title(canvas, source, box, color, visible_height):
+    """Crop alpha padding, preserve the MasterGo title height, and derive width from its ratio."""
+    alpha = Image.open(source).convert('RGBA').getchannel('A')
+    bounds = alpha.getbbox()
+    if not bounds:
+        raise SystemExit('Title asset has no visible alpha content')
+    alpha = alpha.crop(bounds)
+    scale = visible_height / alpha.height
+    size = (round(alpha.width * scale), visible_height)
+    alpha = alpha.resize(size, Image.Resampling.LANCZOS)
+    image = Image.new('RGBA', size, color + (0,))
+    image.putalpha(alpha)
+    x = box['x'] + (box['width'] - size[0]) // 2
+    y = box['y'] + (box['height'] - size[1]) // 2
+    canvas.alpha_composite(image, (x, y))
+
 def draw_centered(draw, box, text, text_font, fill):
     left, top, right, bottom = draw.textbbox((0, 0), text, font=text_font)
     x = box['x'] + (box['width'] - (right - left)) / 2 - left
@@ -53,6 +69,8 @@ def draw_wave(canvas, box, fill, curve_height):
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('--base-image', required=True)
+    p.add_argument('--title-asset', required=True, help='Transparent PNG containing only the approved title-only generation result.')
+    p.add_argument('--title-color', help='Optional #RRGGBB override for the title layer.')
     p.add_argument('--brand-asset', default=str(ROOT / 'member-day-brand-mask.png'), help='MasterGo top-mark alpha-mask PNG asset.')
     p.add_argument('--brand-color', help='Optional #RRGGBB override for the member-day mark and date.')
     p.add_argument('--date-text', required=True)
@@ -61,8 +79,18 @@ def main():
     cfg = json.loads((ROOT / 'template.json').read_text())
     w, h = cfg['canvas']['width'], cfg['canvas']['height']
     base = Image.open(args.base_image).convert('RGBA')
-    if base.size != (w, h): raise SystemExit(f'AI base must be {w}x{h}, got {base.size[0]}x{base.size[1]}')
+    if base.size != (w, h):
+        ratio = base.width / base.height
+        expected_ratio = w / h
+        if abs(ratio - expected_ratio) > .001:
+            raise SystemExit(f'AI base must be {w}x{h} or a {expected_ratio:g}:1 image, got {base.size[0]}x{base.size[1]}')
+        base = base.resize((w, h), Image.Resampling.LANCZOS)
     output = Path(args.output).with_suffix('.png'); output.parent.mkdir(parents=True, exist_ok=True)
+    title = cfg['title_layer']
+    title_box = title['box']
+    title_local = sample(base, (title_box['x'], title_box['y'], title_box['x'] + title_box['width'], title_box['y'] + title_box['height']))
+    title_color = rgb_color(args.title_color) if args.title_color else shade(title_local, .25 if luminance(title_local) > .52 else .86)
+    paste_tinted_title(base, args.title_asset, title_box, title_color, title.get('visible_height', title_box['height']))
     rb = cfg['rule_button']; local = sample(base, (rb['x']-30, rb['y'], w, min(h, rb['y']+rb['height'])))
     button = shade(local, .25 if luminance(local) > .52 else .77)
     rule_text = '#FFF9EC' if luminance(button) < .52 else '#3A250E'
@@ -82,5 +110,5 @@ def main():
     draw_centered(draw, {'x': rule['x'], 'y': rule['y'] + char_height, 'width': rule['width'], 'height': char_height}, '则', rule_font, rule_text)
     draw_wave(base, wave_box, hex_color(wave), wave_box['curve_height'])
     base.convert('RGB').save(output, 'PNG')
-    print(json.dumps({'png': str(output), 'brandColor': hex_color(brand_color), 'ruleButton': hex_color(button), 'ruleText': rule_text, 'wave': hex_color(wave)}, ensure_ascii=False))
+    print(json.dumps({'png': str(output), 'titleColor': hex_color(title_color), 'brandColor': hex_color(brand_color), 'ruleButton': hex_color(button), 'ruleText': rule_text, 'wave': hex_color(wave)}, ensure_ascii=False))
 if __name__ == '__main__': main()
