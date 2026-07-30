@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "profiles": {
+    "membership-b-2x1": {
+      "business_line": "会员",
+      "preset_levels": ["B"],
+      "format": "2:1",
+      "pipeline": ["text_layout_renderer"],
+      "layout_profile": "membership/b-2x1.json",
+      "title_source": "local_text",
+      "subtitle_source": "local_text",
+      "purpose": "会员 B 的本地主副标题规则；标题组渲染后，会员 renderer 根据本地标题坐标在其上方左对齐增加会员标识。"
+    },
+    "membership-as-2x1": {
+      "business_line": "会员",
+      "preset_levels": ["A", "S"],
+      "format": "2:1",
+      "pipeline": ["title_asset", "membership_head_renderer:membership-as"],
+      "title_source": "transparent_title_asset",
+      "subtitle_source": "membership_fixed_date_layer",
+      "purpose": "会员 A/S 使用标题专用透明 PNG 和固定会员日合成层，不可使用回收文字 profile。"
+    }
+  }
+}

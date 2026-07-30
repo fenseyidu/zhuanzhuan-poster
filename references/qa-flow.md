@@ -65,7 +65,8 @@ PASS:
 - When the selected background recipe defines candidate elements, count caps, optional carriers, or hard light/spatial rules, the review records one concrete `背景选用清单`, and `最终 Prompt` writes only that selected subset rather than the full candidate pool.
 - `最终 Prompt` is concise and suitable for direct image generation.
 - `最终 Prompt` includes selected format behavior, product source, product arrangement, background, title/subtitle handling, and essential constraints.
-- 4:3 and 16:9 long main titles include the semantic two-line title rule when applicable; 2:1 main titles stay single-line when readable and use semantic two-line handling only when a long line would squeeze product space or reduce readability.
+- In the `会员` B `2:1` local-composition route, a non-empty title-group subtitle is excluded from the AI text request and has a local-composition plan using `assets/subtitle-typography.json`; the review records its final font size, visible box, color, and title gap after rendering. In every other route, the exact subtitle remains in the AI text request and no local subtitle layer is planned.
+- 4:3 and 16:9 long main titles include the semantic two-line title rule when applicable; 2:1 titles use the active route's measured maximum width as the only automatic wrapping trigger. For 会员 A/S this is 908px at 1125px reference width; for 会员 B it is 590px at the same reference width.
 - User-provided copy uses one carrier only and does not duplicate subtitle/list content.
 - Selected `negative_rule_ids` are deduplicated through `12_negative_rules.csv`.
 - No unprovided readable factual information is introduced, such as price, discount, subsidy, ranking, brand, model, date, IP name, game name, or service promise.
@@ -79,7 +80,7 @@ FAIL:
 - `biz_consumer_electronics / 消费电子` A/S stays at the parent A/S route, or only lists candidate directions such as 微缩主题场景 or 超现实商品场景, without selecting one concrete combination direction from `08_product_combinations.csv` and making it the primary final-prompt language.
 - `biz_consumer_electronics / 消费电子` uses a real-scene route but the final prompt describes only a plain photographic scene without a consumer-electronics lighting strategy, material/light detail, or advertising design layer.
 - A selected background row defines candidate elements, count caps, or hard light/spatial rules, but the final prompt leaves the background as an unresolved candidate pool, expands beyond the row, or omits the required selected subset record.
-- The final prompt omits product source, output format, title/subtitle, or core product identity constraints.
+- The final prompt omits product source, output format, title/subtitle handling, or core product identity constraints.
 - The final prompt uses `生图执行 Prompt`, parameter traces, or full merged negative rules as model input.
 - The prompt adds unprovided readable factual information or unrelated readable text.
 - The prompt asks for people, hands, wearing, operation, props, or scene extensions that do not serve the theme, product value, selected visual expression mode, or provided assets.
@@ -93,7 +94,7 @@ Required action:
 1. Read `references/visual-qa.md`.
 2. Inspect the generated image against each required layer. When uploaded product images exist, explicitly compare the generated product against the uploaded product image before deciding `通过`.
 3. Classify result as `通过`, `需定向重生`, or `需人工后期`.
-4. For every `会员` A/S 2:1 head, before fixed-layer composition check the title-free base against the lower product region and slots, then check the title-only PNG for exact copy, transparency, style, title-box fit, and fixed-layer reservations. Retry only the failed asset. After composition, check all layers for collisions. `会员` B is explicitly excluded from this route. For other failures, if image generation is available, list the failed layer, concrete failure point, and passed layers to keep unchanged; then follow the `Targeted Edit Input Contract` in `generation-execution.md`: use the current generated image as the only untyped retry input, write one local targeted correction prompt, and regenerate once by default. When the failed layer is `商品层` and the product no longer matches the uploaded product image, use a source product image only if the editing capability can explicitly assign it a product-reference role; otherwise prefer `需人工后期` to an untyped multi-image retry.
+4. For every `会员` A/S 2:1 head, before fixed-layer composition check the title-free base against the lower product region and slots, then check the title-only PNG for exact copy, transparency, style, title-box fit, and fixed-layer reservations. Retry only the failed asset. After composition, check all layers for collisions and confirm the date/subtitle uses the global subtitle typography policy. For `会员` B 2:1, first verify that the full recycle B visual route was used: stable support, no people, `bg_recycle_service_graphic`, no support surface or one continuous support surface, and—when two or more physical product assets are supplied—the `combo_multi_recyclable` product geometry. Verify that the generated poster base omits only the main title and subtitle while preserving source-product text and screen content. Compose with `text_layout_renderer.py --profile membership-b-2x1 --trace-output <title-layout.json>`, then with `membership_head_renderer.py --mode membership-b --title-layout <title-layout.json>`; verify the local member mark is left-aligned above the local title and does not collide with title, subtitle, product, or background details. The review must record membership business wording and must not add recycle coverage or service claims. For other failures, if image generation is available, list the failed layer, concrete failure point, and passed layers to keep unchanged; then follow the `Targeted Edit Input Contract` in `generation-execution.md`: use the current generated image as the only untyped retry input, write one local targeted correction prompt, and regenerate once by default. When the failed layer is `商品层` and the product no longer matches the uploaded product image, use a source product image only if the editing capability can explicitly assign it a product-reference role; otherwise prefer `需人工后期` to an untyped multi-image retry.
 5. Write the conclusion into `review.md` and user-facing notes.
 
 Use this output shape:
@@ -106,6 +107,10 @@ QA 结论：通过 / 需定向重生 / 需人工后期
 定向修正 Prompt：{targeted_retry_prompt_or_无}
 ```
 
+## Membership B Mark QA Override
+
+For `会员` B 2:1, fail Visual QA if the AI base contains a membership-mark reservation, blank rounded placeholder, empty card/block, or an AI-generated membership logo. The AI prompt must contain no reservation instruction. Only after the base passes does the renderer dynamically place the 60px mark from the measured title top/left boundary and representative title color.
+
 ## Technical QA
 
 Technical QA is a simple deterministic check after saving files. No script is required by default.
@@ -114,7 +119,7 @@ PASS:
 
 - Generated image path is recorded.
 - `review.md` is saved when image generation runs.
-- Test archive is outside the skill folder, under `<skill-parent>/zhuanzhuan-poster-prompt-test-cases/`.
+- Output archive is under `~/Documents/转转海报输出/`, not in or beside the skill installation directory.
 - Output image can be opened or displayed by the current environment.
 - Image aspect ratio matches requested `1:1`, `4:3`, `16:9`, or `2:1` when dimensions are inspectable.
 
@@ -122,7 +127,7 @@ FAIL:
 
 - Generated image is missing or cannot be opened.
 - `review.md` is missing after image generation.
-- Archive was written inside `zhuanzhuan-poster-prompt/`.
-- Inspectable image dimensions do not match requested format.
+- Archive was written in or beside the skill installation directory instead of `~/Documents/转转海报输出/`.
+- Inspectable final image dimensions do not match requested format. For `会员` A/S 2:1, a non-2:1 AI base is not itself a failure: the renderer normalizes it by cover-scaling and cropping before final-size QA.
 
-When Technical QA fails, fix file/archive issues once if possible. If image dimensions are wrong and image generation is available, regenerate once with a targeted format correction.
+When Technical QA fails, fix file/archive issues once if possible. For `会员` A/S 2:1, normalize a first-generation AI-base ratio mismatch in the renderer; do not regenerate solely for that mismatch. Regenerate only if the final composed image still has a distinct foreground, slot, or collision failure that cropping cannot resolve.

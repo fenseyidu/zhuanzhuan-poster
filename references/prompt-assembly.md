@@ -49,6 +49,14 @@ Assemble `最终 Prompt` as a concise natural-language paragraph similar to the 
 
 The final prompt should read like a reusable generation prompt, not like a parameter table translated into prose. Avoid raw phrases such as `商品关系采用...`, `商品组合方式采用...`, `背景采用...` unless they naturally fit the sentence.
 
+## Main-title Typography
+
+Apply this rule after resolving category-specific typography. For `会员` A/S, write the entire main title as `思源宋体 SC Heavy（SourceHanSerifSC-Heavy.otf）`, with a front-facing, flat, solid-color layout. An A/S `补充要求` containing the exact phrase `特殊字` uses `member-day-title-style-reference.png` as the reference for the entire main-title glyph style. For `会员` B, write the entire main title as a modern display-Heiti treatment: front-facing, flat, solid-color, firm heavy strokes, and a stable center of gravity. Record the resolved title mode in review Markdown.
+
+## 2:1 Subtitle Typography
+
+For a non-empty title-group subtitle in the `会员` B `2:1` route, do not submit the subtitle text to the image model. Reserve its resolved subtitle area as clean background, then render the exact user copy after generation with the route-owned renderer and `assets/subtitle-typography.json`. The policy fixes Alibaba PuHuiTi Regular at 40px on a 1125px-wide reference canvas and scales by final canvas width. Place it below the measured or fixed main-title box, use the title's left edge by default, and record the final font size, color, visible box, and title gap in review Markdown. For every other route, submit the subtitle to the image model as part of the title group. When a route intentionally resolves the subtitle into separate information modules, do not also render a title-group subtitle.
+
 ## Visual Inheritance And Modulation
 
 Build visual language through inheritance first, then modulation. Do not let a downstream row overwrite the business-line tone unless the user explicitly requests it.
@@ -114,17 +122,52 @@ Use phrasing naturally, for example:
 
 For `biz_n_category + cat_collectible_toy`, write these fixed preset details into the final prompt: A uses a torn-paper title area, pale-green grid memo, top ring binder, paper tape, sparse stickers, and dotted doodle lines as one continuous journal-style paper-craft layout; S must contain visible torn-paper edges integrated with the flat-background-plus-light-3D display.
 
-## Membership A/S 2:1 Image-to-Image Prompt
+## Membership B Prompt
 
-When `business_line_id=biz_membership`, `category_id=cat_membership_day`, `format_id=fmt_landscape_2_1`, and preset level is `A` or `S`, run two distinct image tasks. The saved title-free MasterGo background master is the AI-base edit target; the saved brush-title PNG is a typography reference for a title-only task. Do not use a title-and-product image as the base and do not erase a generated title afterwards.
+When `business_line_id=biz_membership`, `category_id=cat_membership_day`, and preset level is `B`, use the normal final-prompt pipeline with the inherited stable-support visual route and the membership business tone. Do not use the A/S MasterGo base, title-only asset, fixed-layer compositor, or product-slot template.
 
-Use this AI-base prompt structure, replacing bracketed values with current task values:
+For `format_id=fmt_landscape_2_1`, require a poster base without the main title and subtitle. This applies only to the title group: all visible text, icons, and screen content that belong to the uploaded products must remain unchanged. Do not mention a membership-mark area, reservation, placeholder, or extra upper-left whitespace in the final Prompt. After generation, run `text_layout_renderer.py --profile membership-b-2x1 --trace-output <title-layout.json>`, then let `membership_head_renderer.py --mode membership-b --title-layout <title-layout.json>` add `member-b-brand.png` above the local title. Do not ask the image model to draw, imitate, recolor, or regenerate the membership mark.
 
-```text
-以输入的无标题会员日暖金母版为唯一编辑目标。保留原画布比例、连续暖金背景、下方商品组贴底位置、商品间重叠关系、金币、小玩偶、透视、光影与阴影；标题框、会员标识、日期、规则和底波浪区域保持干净。下方商品与前景金币整体限定在画面下方 30% 区域，商品主体最高可见点不高于画面高度 72%。下方固定槽位必须按以下“母版原对象 → 上传商品”逐项局部替换：{slot_replacement_map}。每件商品严格继承对应槽位的大小、位置、倾斜方向、三分之四视角、前后层级、可见重点和光影关系；{foreground_description}。AI 底图中不要生成主标题、会员日标识、日期、副标题、规则按钮、规则文字、底部波浪；海报场景中不要新增人物、手部、礼盒、卡片、价格、折扣、排名、服务承诺、第三方会员卡；但上传商品自身的屏幕、取景器或显示窗中原有的人像、场景或界面属于商品外观，必须保留。
+For `biz_membership` B in `fmt_landscape_2_1`, add these requirements to the final Prompt: `以 1125×562 的 2:1 画布为基准，海报底图不生成主标题和副标题；商品本体及其屏幕、机身、包装上的原有文字、图标和界面内容必须保留。主视觉商品组紧凑地限定在画面右侧 57%–94%、纵向 32%–84% 的区域内，错落陈列且不侵入左侧标题阅读区，不铺满右半屏，不贴边。`
+
+For `biz_membership + cat_membership_day + B`, fully inherit the recycle B visual product route. With two or more physical product assets, use the visual geometry of `combo_multi_recyclable`: two products keep reasonable near-equal visual weight without a forced main/support hierarchy and are staggered through front/back, high/low, offset bottom edges, size, angle, light perspective, or slight overlap; three or more products may use one clearer main object. All products share one continuous light space, one light direction, and either no support surface or one continuous support surface; do not use a card matrix, multiple separated podiums, aligned bottom edges, equal-height side-by-side placement, or an ordinary sale-product pairing. Describe this in the final Prompt as a `会员活动多商品主视觉`, never as recycle coverage or recycle service; do not add recycle estimates, inspection, payment, service trust, or other recycle wording.
+
+```bash
+python3 assets/text_layout_renderer.py \
+  --profile membership-b-2x1 \
+  --base-image <generated-b-2-1-poster.png> \
+  --title <main-title> \
+  --subtitle <subtitle> \
+  --output <title-group.png> \
+  --trace-output <title-layout.json>
+
+python3 assets/membership-head-template/membership_head_renderer.py \
+  --mode membership-b \
+  --base-image <title-group.png> \
+  --title-layout <title-layout.json> \
+  --output <final-poster.png>
 ```
 
-The separate title-only task treats `member-day-title-style-reference.png` as a reference-image text-replacement target, rather than a typography mood reference. For the bundled default reference, submit this prompt exactly, replacing only `{main_title}`:
+## Membership A/S 2:1 Image-to-Image Prompt
+
+When `business_line_id=biz_membership`, `category_id=cat_membership_day`, `format_id=fmt_landscape_2_1`, and preset level is `A` or `S`, run two distinct image tasks. The saved title-free MasterGo background master is the AI-base edit target. Create a separate transparent title-only asset: render with `SourceHanSerifSC-Heavy.otf` by default; only when `补充要求` contains `特殊字`, use the saved brush-title PNG as the typography reference. Do not use a title-and-product image as the base and do not erase a generated title afterwards.
+
+Build the AI-base prompt from one shared block and exactly one lower-foreground block. Do not combine the direct gift foreground with the inside-box slot foreground.
+
+```text
+以输入的无标题会员日暖金母版为唯一编辑目标。保留原画布比例、连续暖金背景、下方前景贴底位置、金币、透视、光影与阴影；标题框、会员标识、日期、规则和底波浪区域保持干净。下方主视觉区域整体限定在距画面顶部 70% 至底边的区域内。AI 底图中不要生成主标题、会员日标识、日期、副标题、规则按钮、规则文字、底部波浪；海报场景中不要新增人物、手部、卡片、价格、折扣、排名、服务承诺、第三方会员卡。
+```
+
+Use one of these lower-foreground blocks:
+
+| Supplied product assets | Lower-foreground block |
+|-|-|
+| 0 | `下方主视觉为 2-3 个礼盒、少量丝带和金币的直接贴底层叠组合，不使用外层礼盒容器、盒口、盒角或盒壁。以 1 个主礼盒和 1-2 个辅助礼盒形成居中、连续的前后层叠群组，礼盒尺寸和高度有变化、自然相互遮挡，不均匀铺满两侧边缘；金币与丝带仅作低量点缀，保持当前画面的整体色彩系统、透视、光影与阴影。` |
+| 1, visibly a gift box | `下方主视觉沿用 2-3 个礼盒、少量丝带和金币的居中贴底层叠组合，不使用外层礼盒容器、盒口、盒角或盒壁；以上传礼盒素材替换主礼盒，并保留其外观、结构、颜色、材质和关键识别特征。` |
+| 1-4, other products | `下方主视觉采用从礼盒内部向上展开的近景视角：镜头位于盒口上方，朝盒内轻微俯视。礼盒以低矮的打开式礼盒承托商品，盒壁仅在画面下缘露出。礼盒从画布底边自然延续，商品组在底边的盒内空间向上错落露出。画面呈现商品背后的盒口内沿、左右低位的局部盒角、盒内金币与丝带；前侧盒壁和盒底顺着画布下方延展，形成贴底的近景空间。礼盒的颜色、材质和光影跟随当前画面的整体色彩系统。首次 AI 底图生成时，礼盒开口及左右盒角整体约占画面宽度 75%，居中陈列，两侧保留呼吸空间，不贴画面边缘。下方固定槽位按以下“母版原对象 → 上传商品”逐项局部替换：{slot_replacement_map}；每件商品严格继承对应槽位的大小、位置、倾斜方向、三分之四视角、前后层级、可见重点和光影关系；{foreground_description}。` |
+| more than 4 | Stop and ask the user to keep at most four products. |
+
+When `补充要求` contains `特殊字`, the separate title-only task treats `member-day-title-style-reference.png` as a reference-image text-replacement target, rather than a typography mood reference. For the bundled reference, submit this prompt exactly, replacing only `{main_title}`:
 
 ```text
 使用图1作为参考图，将图中的“狂欢开启 惊喜到周末”改为“{main_title}”。
@@ -132,28 +175,27 @@ The separate title-only task treats `member-day-title-style-reference.png` as a 
 将标题置于完全纯色 #00FF00 绿色背景中央，背景只能是单一无纹理无阴影的绿色，便于后续抠图；标题本身不得使用绿色。
 ```
 
-For a user-supplied title reference, replace the first quoted string with the visible title copy in that reference. Do not add style descriptors such as `厚重`、`流动`、`有力量`、`行书`、`毛笔节奏`, because they make the model reinterpret and alter the reference strokes. Convert the result to a transparent title PNG before composition. It is not submitted as another untyped image alongside an AI-base retry.
+Without `特殊字`, render the exact main title from `assets/membership-head-template/fonts/SourceHanSerifSC-Heavy.otf` to a transparent PNG before composition. For a user-supplied title reference with `特殊字`, replace the first quoted string with the visible title copy in that reference. Do not add style descriptors such as `厚重`、`流动`、`有力量`、`行书`、`毛笔节奏`, because they make the model reinterpret and alter the reference strokes. Convert the brush-reference result to a transparent title PNG before composition. It is not submitted as another untyped image alongside an AI-base retry.
 
-Build `{slot_replacement_map}` from `template.json.product_slots` in slot order, after applying `slot_assignment`. Each supplied asset must be written as `{reference_subject} 槽位替换为第 {actual_upload_order} 张{visible_product_description}`. When an asset has a visible screen, viewfinder, or display window, `visible_product_description` must also state that its original screen content is retained; this includes an original person, scene, or interface. The automatic mapping classifies the cut-out product silhouette and hierarchy: portrait products preferentially enter the center main slot, flat products preferentially enter the two side slots, and upload order resolves only otherwise identical candidates. `reference_subject` comes only from the matching template row; `visible_product_description` uses only safely visible category, color, and appearance traits from that uploaded image, without inventing a brand, model, price, or parameter. Never substitute a generic phrase such as `槽位 1 为商品 1`. If the user explicitly maps an uploaded asset to a named reference subject, use that mapping instead of automatic assignment and record the override in review Markdown.
+For the ordinary-product branch, build `{slot_replacement_map}` from `template.json.product_slots` in slot order, after applying `slot_assignment`. Each supplied asset must be written as `{reference_subject} 槽位替换为第 {actual_upload_order} 张{visible_product_description}`. When an asset has a visible screen, viewfinder, or display window, `visible_product_description` must also state that its original screen content is retained; this includes an original person, scene, or interface. The automatic mapping classifies the cut-out product silhouette and hierarchy: portrait products preferentially enter the center main slot, flat products preferentially enter the two side slots, and upload order resolves only otherwise identical candidates. `reference_subject` comes only from the matching template row; `visible_product_description` uses only safely visible category, color, and appearance traits from that uploaded image, without inventing a brand, model, price, or parameter. Never substitute a generic phrase such as `槽位 1 为商品 1`. If the user explicitly maps an uploaded asset to a named reference subject, use that mapping instead of automatic assignment and record the override in review Markdown.
 
-`foreground_description` reads `template.json.product_slots`; the template is the only fixed-slot source:
+`foreground_description` reads `template.json.product_slots`; use it only for the ordinary-product branch:
 
 | Supplied product assets | AI-base lower foreground |
 |-|-|
-| 0 | `通用礼盒、丝带和金币` |
 | 1 | asset 1 occupies its template slot; retain the small toy and coins |
 | 2 | assets 1-2 occupy their template slots; retain the small toy and coins |
 | 3 | assets 1-3 occupy their template slots; retain the small toy and coins |
 | 4 | assets 1-4 occupy all template slots; retain coins |
 | more than 4 | stop before generation and ask the user to keep at most four products |
 
-With supplied assets, use the template's `partial_upload_behavior`. The resulting foreground keeps the reference image's original product composition as a set of local substitutions. The warm-gold background, product-group silhouette, coins, small toy, and bottom-edge crop stay in the retained base. The member-day mark, date subtitle, rule button, rule text, and bottom wave are fixed compositor layers.
+With other supplied assets, use the template's `partial_upload_behavior`; the resulting foreground keeps the reference image's original product composition as a set of local substitutions. The member-day mark, date subtitle, rule button, rule text, and bottom wave are fixed compositor layers.
 
 ## Membership A/S 2:1 Independent QA And Targeted Edit
 
-Check the title-free base first: no title/fixed layers, products and coins remain in `foreground_region`, every supplied product stays in its named slot, and the staggered foreground holds. A failure uses a product/base-only targeted edit.
+Check the title-free base first: no title/fixed layers, and the foreground remains in `foreground_region`. With no supplied product assets, the foreground uses the default gift boxes, ribbons, and coins. With a single gift-box asset, the foreground keeps that default composition and the gift boxes preserve the uploaded asset's visible appearance. With other supplied assets, every supplied product stays in its named slot and the staggered foreground holds. A failure uses a product/base-only targeted edit.
 
-Check the title PNG second: exact title copy, usable transparency, brush style, title-box fit, and no brand/date collision. A failure regenerates only the title asset; never ask the product-base model to rewrite it.
+Check the title PNG second: exact title copy, usable transparency, selected title style (default 思源宋体 SC Heavy; `特殊字` only uses the brush reference), title-box fit, and no brand/date collision. A failure regenerates only the title asset; never ask the product-base model to rewrite it.
 
 Only after both pass, invoke the compositor. If any title/product/fixed-layer collision appears in the completed image, mark `合成碰撞失败`.
 
@@ -222,6 +264,7 @@ When the selected `background_recipe_id` contains candidate elements, props, cou
 - Record `背景选用清单` in review Markdown together with the selected background ID and Chinese name.
 - When the selected background is `bg_recycle_service_graphic / 回收_背景_弱中语境`, resolve and record the support surface as `无台面` or `1 个连续台面/统一承托面`. The final prompt must not leave this open-ended as multiple platforms, and must not allow two or more separated podiums, round platforms, stone blocks, trays, or support blocks.
 - When the selected combination is `combo_multi_recyclable / 多品类回收组合`, write the product arrangement as a staggered recycle product group by default. For exactly 2 products or categories, do not write a forced main/support hierarchy; keep both products at reasonable size and require stagger through front/back, high/low, offset bottom edges, size, angle, light perspective, or slight overlap. Explicitly avoid aligned lower edges, equal-height side-by-side placement, and ordinary product-pair posing. For 3 or more products or categories, one main recyclable object may be larger, while supporting objects are arranged with front/back, high/low, size, angle, and light-perspective variation. Each product remains complete and recognizable. Do not describe it as a generic card matrix unless the user explicitly asks for cards, entrance grids, iconized categories, or flow nodes.
+- For `biz_membership + cat_membership_day + B`, apply the preceding `combo_multi_recyclable` geometry and support-surface rule as a visual parent rule, but describe the result only as a membership activity product group. Do not copy recycle coverage or service semantics into the final Prompt.
 
 When `business_line_id=biz_n_category / N 品类` and `category_id=cat_billiards_cue / 台球杆`, B/A/S all resolve and write this item into the final prompt:
 
@@ -331,10 +374,10 @@ When `format_id=fmt_landscape_4_3` or `format_id=fmt_landscape_16_9` and the mai
 主标题超过 4 个汉字时，默认按语义拆成两行标题组，每行保留完整词组，不拆断品牌名、品类名、数字权益或固定短语；在最终 Prompt 中明确写出两行标题，例如：主标题按两行展示：「第一行」和「第二行」。
 ```
 
-When `format_id=fmt_landscape_2_1`, prioritize a single-line main title. If the main title is long enough that a single line would squeeze the product area or reduce readability, add this title handling rule and write the concrete split:
+When `format_id=fmt_landscape_2_1`, apply the route-owned maximum title width before deciding a line break. For `会员` A/S use 908px at a 1125px-wide reference canvas; for `会员` B use 590px at the same reference width. If the one-line visible width exceeds that route maximum, add this title handling rule and write the concrete semantic split:
 
 ```text
-2:1 横版主标题优先保持单行；当标题较长、单行会挤压商品区或影响可读性时，再按语义拆成两行标题组，每行保留完整词组、标点和固定短语；在最终 Prompt 中明确写出两行标题，例如：主标题按两行展示：「第一行」和「第二行」。
+2:1 横版先测量主标题的单行可见宽度；仅当它超过当前路线的最大宽度时，才按语义拆成两行标题组。每行保留完整词组、标点和固定短语；在最终 Prompt 中明确写出两行标题，例如：主标题按两行展示：「第一行」和「第二行」。
 ```
 
 When `business_line_id=biz_recycle`, `format_id=fmt_landscape_2_1`, and the user explicitly provides `label_text`, render it as an optional top label above the main title. Do not infer or auto-generate a label when the field is absent.
@@ -425,7 +468,7 @@ Before finalizing, run this Pre-output self-check for prompt assembly. Post-gene
 - benefit, selling-point, and service information stays light: short text, subtle separators, centered dots, or low-presence information lines; consumer electronics should not use icon cards, benefit cards, selling-point cards, button-like modules, or obvious UI containers
 - for 1:1 square posters, the main title is kept as a complete single-line title unless the user explicitly asks for line breaks
 - for 4:3 and 16:9 landscape posters, if the main title is longer than 4 Chinese characters, it is handled as a semantic two-line title group
-- for 2:1 landscape posters, the main title stays single-line when readable, and only long titles that would squeeze the product area or reduce readability are handled as semantic two-line title groups
+- for 2:1 landscape posters, the main title stays single-line when readable and uses a semantic two-line title group only when a long line would squeeze product space or reduce readability
 - user-provided copy uses one carrier only; no repeated subtitle/list copy across title area and cards
 - format matches the requested ratio and reading flow
 - no unprovided readable factual information such as price, ranking, model, date, or service promise appears

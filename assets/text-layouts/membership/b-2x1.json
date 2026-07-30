@@ -1,0 +1,26 @@
+{
+  "id": "membership-b-2x1",
+  "reference_width": 1125,
+  "title": {
+    "font": "../../membership-head-template/fonts/Zhuan-Expanso-beta-Medium.ttf",
+    "font_size": 80,
+    "min_font_size": 80,
+    "x": 50,
+    "y": 183,
+    "max_width": 590,
+    "max_lines": 2,
+    "prefer_semantic_breaks": true,
+    "line_height": 89,
+    "color": "#111111"
+  },
+  "subtitle": {
+    "font": "../../membership-head-template/fonts/Alibaba_PuHuiTi_2.0_55_Regular_55_Regular.ttf",
+    "font_size": 40,
+    "x": 50,
+    "max_width": 410,
+    "max_lines": 3,
+    "line_height": 55,
+    "title_gap": 17,
+    "color": "#3D3D3D"
+  }
+}

@@ -5,35 +5,92 @@
   "rule_button": {"x": 2148, "y": 376, "width": 102, "height": 170, "radius": 32},
   "rule_text": {"x": 2172, "y": 390, "width": 66, "height": 140},
   "wave": {"x": 0, "y": 1036, "width": 2250, "height": 90, "curve_height": 84},
+  "reference_text_colors": {
+    "title": "#7E4504",
+    "brand": "#7E4504",
+    "date": "#7E4504",
+    "behavior": "会员 A/S 2:1 未提供明确颜色要求时，标题、会员日标识和日期统一沿用 bundled MasterGo 参考标题的 #7E4504；不按局部背景自动换色。title-color 或 brand-color 是显式覆盖。"
+  },
+  "text_contrast": {
+    "candidates": {"light": "#FFF8E8", "dark": "#2B180D"},
+    "minimum_contrast": {"title": 3.0, "brand": 4.5, "date": 4.5},
+    "reading_field": {
+      "color": "#2B180D",
+      "opacity_steps": [0.18, 0.30, 0.42, 0.54],
+      "padding": {"x": 80, "y": 48},
+      "radius": 80,
+      "blur_radius": 72
+    },
+    "behavior": "兼容旧模板的对比度回退配置；当前会员 A/S 2:1 模板已配置 reference_text_colors，默认不启用自动换色。"
+  },
   "title_layer": {
     "style_reference": "member-day-title-style-reference.png",
     "base_reference": "source/member-day-background-master.png",
-    "box": {"x": 244, "y": 350, "width": 1760, "height": 324},
-    "visible_height": 280,
+    "box": {"x": 217, "y": 360, "width": 1816, "height": 324},
+    "visible_height": 220,
+    "max_visible_width": 1816,
+    "layout": {
+      "reference_width": 1125,
+      "font_size": 110,
+      "max_width": 908,
+      "max_lines": 2,
+      "line_height": 120,
+      "overflow_behavior": "semantic_wrap"
+    },
     "asset_requirement": "标题专用生图完成后必须提供透明背景的 PNG；只保留毛笔字，不得包含暖金背景、商品、会员标识、日期、规则或底波浪。合成器会按可见 alpha 内容裁切后等比缩放并居中，禁止把整张源画布强制拉伸至标题框。",
-    "color_behavior": "合成器只使用标题 PNG 的 alpha 通道，并从标题框下方 AI 底图采样生成有足够对比的深暖金色；用户可用 title-color 覆盖。",
-    "size_behavior": "可见标题高度固定为 visible_height；宽度由裁切后的 alpha 内容等比自适应，禁止强制填满 box.width。"
+    "color_behavior": "合成器只使用标题 PNG 的 alpha 通道；默认使用 MasterGo 参考色 #7E4504，用户可用 title-color 覆盖。",
+    "size_behavior": "标题资产按 layout.reference_width 等比换算；先以 layout.font_size 和 layout.max_width 排版，单行可见宽度超过 max_width 时按语义折行，最多 max_lines 行。合成器只接受宽度不超过 max_visible_width 的资产；标题整体可见高度固定为 visible_height，宽度由裁切后的 alpha 内容等比自适应，禁止强制填满 box.width。"
+  },
+  "membership_b_brand_layer": {
+    "asset": "member-b-brand.png",
+    "box": {"x": 225, "y": 205, "width": 640, "height": 110},
+    "visible_height": 60,
+    "format": "2:1",
+    "placement": "会员 B 2:1 使用左文右图版式；renderer 先测量生成图中的主标题可视边界，再将品牌标识左边线对齐标题左边线，并置于标题上方的安全间距内。不要在生成 Prompt 中要求任何标识预留区、占位块或额外留白；标识位置完全由 renderer 根据实测标题边界计算。",
+    "color_behavior": "renderer 只读取 brand PNG 的 alpha 通道。默认从生成图中的主标题实体像素提取代表色后着色；title-color 仅是检测失败时的显式回退，不作为默认工作流。",
+    "title_measurement": {
+      "search_box": {"x": 40, "y": 300, "width": 1280, "height": 260},
+      "minimum_pixels": 600,
+      "vertical_gap": 46
+    }
+  },
+  "membership_b_layout": {
+    "subtitle_rule": "会员 B 副标题统一读取 ../subtitle-typography.json。副标题与主标题共用左边线，以较低对比维持副级层级，不加卡片、描边或额外文案。",
+    "product_visual_zone": {
+      "left": "45%",
+      "right": "95%",
+      "top": "32%",
+      "bottom": "84%",
+      "rule": "主视觉商品组整体限定在右侧区域内，商品以紧凑错落组出现，不侵入左侧标题阅读区；不以铺满右半屏或顶到画面边缘的方式放大商品。"
+    }
   },
   "layout_coupling": {
     "name": "标题层与下方商品组最终合成版式",
-    "title_reference_box": {"x": 244, "y": 350, "width": 1760, "height": 324},
+    "title_reference_box": {"x": 244, "y": 360, "width": 1760, "height": 324},
     "title_reference_box_percent": {"left": "10.9%", "right": "89.1%", "top": "31.1%", "bottom": "59.9%"},
     "title_visual_center_percent": "45%",
     "title_visual_center_tolerance_percent": "±2%",
     "brand_reservation": {"x": 722, "y": 232, "width": 806, "height": 102},
     "date_reservation": {"x": 842, "y": 670, "width": 568, "height": 98},
     "foreground_region": {"top": 788, "bottom": 1125},
-    "foreground_visible_region_percent": {"top": "72%", "bottom": "100%"},
-    "foreground_visible_top_max_y": 806,
-    "qa_rule": "AI 商品底图不得包含任何主标题；标题专用 PNG 由合成器固定放入 title_layer.box。先校验商品与金币进入下方主视觉区，商品最高可见点不得高于 foreground_visible_top_max_y；再校验标题 PNG 在标题框内完整可读，且不与标识或日期预留区重叠。最终合成时同时检查标题、商品和固定层的碰撞；标题或商品失败可以分别修正，固定层贴入前不通过最终版式检查。"
+    "foreground_visible_region_percent": {"top": "70%", "bottom": "100%"},
+    "foreground_visible_top_max_y": 788,
+    "gift_box_width": {"target_ratio": "75%", "constraint_type": "ordinary_product_slots_initial_generation_soft_target", "instruction": "仅普通商品槽位分支：礼盒开口及左右盒角整体约占画面宽度 75%，居中陈列，两侧保留呼吸空间，不贴画面边缘；仅作为首次 AI 底图生成的软构图约束。"},
+    "qa_rule": "AI 商品底图不得包含任何主标题；标题专用 PNG 由合成器固定放入 title_layer.box。无商品或单礼盒素材分支，校验礼盒、丝带和金币直接陈列于 foreground_region，不使用外层礼盒容器。普通商品槽位分支，校验盒内近景视角中商品背后的盒口内沿、左右低位局部盒角、盒内金币与丝带共同形成商品组的容器关系，前侧盒壁和盒底顺着画布下方延展，且商品与金币整体进入 foreground_region（自画面顶部 70% 至底边），任何商品最高可见点不得高于 foreground_visible_top_max_y；首次 AI 底图还应校验礼盒开口及左右盒角约占画面宽度 75%，两侧保留呼吸空间。再校验标题 PNG 在标题框内完整可读，且不与标识或日期预留区重叠。最终合成时同时检查标题、商品和固定层的碰撞；标题或商品失败可以分别修正，固定层贴入前不通过最终版式检查。"
   },
   "product_slots": {
     "reference_image": "member-day-ai-reference.png",
     "base_reference_image": "source/member-day-background-master.png",
     "replacement_mode": "local_image_to_image",
+    "default_gift_foreground": {
+      "applies_when": "无商品素材，或仅一张可识别为礼盒的商品素材",
+      "main_visual_region": "礼盒、丝带和金币整体限定在 foreground_region（距画面顶部 70% 至底边）；上方区域留给会员标识、毛笔标题和日期。",
+      "arrangement": "2-3 个礼盒、少量丝带和金币直接贴底陈列，不使用外层礼盒容器、盒口、盒角或盒壁；以 1 个主礼盒和 1-2 个辅助礼盒形成居中、连续的前后层叠群组，礼盒尺寸和高度有变化、自然相互遮挡，不均匀铺满两侧边缘；金币与丝带仅作低量点缀。仅一张可识别为礼盒的商品素材时，以该素材替换默认礼盒外观、结构、颜色、材质和关键识别特征。"
+    },
     "foreground_arrangement": {
-      "main_visual_region": "下方商品与前景金币整体限定在画面下方 30% 区域（画面高度 70% 至底边）；商品主体最高可见点不高于画面高度 72%，上方区域留给会员标识、毛笔标题和日期。",
-      "entry_rule": "商品组以母版的贴底、前后错落关系进入下方主视觉区。母版中手机只露出约一半，是因为下部自然被前景金币淹没并延伸至画布外，不是硬性裁切比例。根据实际商品尺寸、辨识度和下方主视觉区的层次需要决定是否局部出画：较小商品可完整露出；需要局部出画时，裁切/出画处必须由前景金币自然遮挡，不能形成生硬的画布切断。不要把每件商品机械地等比例裁成一半。",
+      "applies_when": "1-4 张普通商品素材的固定槽位替换",
+      "main_visual_region": "下方商品组与盒内金币整体限定在距画面顶部 70% 至底边的区域内；任何商品最高可见点不得高于距画面顶部 70%，上方区域留给会员标识、毛笔标题和日期。礼盒开口及左右盒角整体约占画面宽度 75%，居中陈列，两侧保留呼吸空间，不贴画面边缘；这是首次 AI 底图生成的软构图约束，不是后续局部编辑的死尺寸。下方主视觉采用从礼盒内部向上展开的近景视角：镜头位于盒口上方，朝盒内轻微俯视。礼盒从画布底边自然延续，商品组在底边的盒内空间向上错落露出。画面呈现商品背后的盒口内沿、左右低位的局部盒角、盒内金币与丝带；前侧盒壁和盒底顺着画布下方延展，形成贴底的近景空间。礼盒的颜色、材质和光影跟随当前画面的整体色彩系统。",
+      "entry_rule": "商品组从盒内向上自然错落露出，商品下部与盒内金币形成前后叠压；商品背后的盒口内沿、左右低位局部盒角、金币与丝带共享统一的主光与材质层次。母版中手机只露出约一半，是因为下部自然被前景金币淹没并延伸至画布外，不是硬性裁切比例。根据实际商品尺寸、辨识度和下方主视觉区的层次需要决定是否局部出画：较小商品可完整露出；需要局部出画时，裁切/出画处必须由前景金币自然遮挡，不能形成生硬的画布切断。不要把每件商品机械地等比例裁成一半。",
       "angle_rule": "各商品保持母版的轻微左右倾斜、三分之四视角与前后错位，不正对镜头平铺或等高并排。",
       "visibility_rule": "以母版中最有辨识度的局部为准：手机优先露出摄像头和上半机身，手提包优先露出提手、包口和纹样，折叠设备优先露出上半机身、折叠轮廓和屏幕边缘；可见比例随槽位、商品尺寸和主视觉层次而定，不设统一裁切比例。"
     },
@@ -57,6 +114,6 @@
     ],
     "always_retained": ["coins"],
     "partial_upload_behavior": "1-3 个商品时保留小玩偶和金币；未使用的商品槽位留空",
-    "default_foreground": "无商品素材时使用礼盒、丝带和金币"
+    "default_foreground": "无商品素材时直接使用礼盒、丝带和金币，不使用外层礼盒容器"
   }
 }

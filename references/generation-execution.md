@@ -57,22 +57,23 @@ The image generation tool must receive only `最终 Prompt`. Do not submit `生�
 6. Default to the available AI image generation capability with `最终 Prompt` only.
 7. Return the generated image.
 8. Run Visual QA. If it fails and image generation is available, use one targeted correction prompt and regenerate once.
-9. Create an external test-case folder and save the generated image plus `review.md`.
+9. Create an output archive under `~/Documents/转转海报输出/` and save the generated image plus `review.md`.
 10. Run lightweight Technical QA from `qa-flow.md`; fix file/archive issues once if possible.
 11. Include the normalized task card, `最终 Prompt`, archive path, and QA notes in the user response.
 
-## Test Archive
+## Output Archive
 
-Every image generation run must create a separate archive folder outside the skill folder:
+Every image generation run must create a separate archive folder under the user's Documents directory:
 
 ```text
-<skill-parent>/zhuanzhuan-poster-prompt-test-cases/{YYYY-MM-DD}_{main_title}_{format}/
+~/Documents/转转海报输出/{YYYY-MM-DD}_{main_title}_{format}/
 ```
 
-Do not create test outputs inside:
+Do not create output folders in or beside:
 
 ```text
 <skill-folder>/
+<skill-parent>/
 ```
 
 Archive contents:
@@ -105,7 +106,9 @@ Use this structure:
 标签：{label_text_or_无}
 主标题：{main_title}
 副标题：{subtitle_or_无}
-标题风格参考：{title_style_reference_or_会员 A/S 使用内置 MasterGo 参考}
+副标题本地排版：{subtitle_typography_policy_or_无}
+标题风格参考：{会员 A/S 且补充要求包含特殊字时用内置毛笔参考}
+主标题字形：{resolved_main_title_typeface}
 装饰字：{decorative_text_or_无}
 视觉方案档位：{visual_preset_level_or_自动}（可选：自动 / B / A / S）
 高级测试字段：{visual_expression_mode_and_people_participation_if_explicit_or_无}
@@ -142,6 +145,9 @@ Use this structure:
 标签：{label_text_or_无}
 主标题：{main_title}
 副标题：{subtitle_or_无}
+副标题本地排版：{subtitle_typography_policy_or_无}
+主标题字形：{resolved_main_title_typeface}
+副标题本地排版：{subtitle_typography_policy_or_无}
 装饰字：{decorative_text_or_无}
 ```
 
@@ -151,6 +157,7 @@ Use this structure:
 业务线：{business_line_id} / {business_line_name}
 业务线基础调性：{business_base_visual_tone}
 业务线视觉优先级：{business_visual_priority}
+主标题字形：{resolved_main_title_typeface}
 品类：{product_category_id} / {product_category_name_or_inferred}
 营销类型：{marketing_type_id} / {marketing_type_name}
 视觉方案档位：{visual_preset_id_or_auto} / {visual_preset_level_name_or_自动}
@@ -194,6 +201,7 @@ Use this structure:
 - 背景基础表达：{background_prompt_fragment}
 - 背景视觉语言：{background_positive_visual_language}
 - 背景连续性：{background_continuity_rules}
+- 副标题本地排版：{subtitle_typography_trace_or_无}
 ```
 
 ## 最终 Prompt
@@ -276,7 +284,7 @@ QA 结论：通过 / 需定向重生 / 需人工后期
 定向修正 Prompt：{short correction prompt if regeneration is useful}
 ```
 
-Use the PASS / FAIL checklist in `visual-qa.md` as the source of truth for visual judgment. If text is inaccurate, say so. Low-priority editorial microcopy, corner labels, decorative English words, light numbering, or publication-style tiny text should not trigger QA by themselves when the selected route explicitly allows them, but exact year/date/season/issue claims should still fail unless the user explicitly provides them. AI image generation may not render exact Chinese text reliably; the title/subtitle can require post-editing.
+Use the PASS / FAIL checklist in `visual-qa.md` as the source of truth for visual judgment. If text is inaccurate, say so. Low-priority editorial microcopy, corner labels, decorative English words, light numbering, or publication-style tiny text should not trigger QA by themselves when the selected route explicitly allows them, but exact year/date/season/issue claims should still fail unless the user explicitly provides them. AI image generation may not render exact Chinese titles reliably; title-group subtitles are rendered locally only in registered `2:1` local-composition routes.
 
 For `biz_consumer_electronics / 消费电子`, always write `背景主色 QA` in `review.md`. If the product has a clear screen main color, product accent color, brand color, or specified main color, but the largest background area still reads as black, white, gray, or cold neutral, mark `背景主色 QA：FAIL`, set the failed layer to `背景层`, and use `Background Main Color Correction / 背景主色定向修正` for targeted retry. If no clear product color source exists, write `背景主色 QA：不适用`.
 
@@ -306,6 +314,12 @@ For measurable position, scale, crop, or slot-geometry repair, do not submit the
 
 ```text
 以当前图为唯一编辑目标。仅将{商品组}整体{缩小并下移}，使{主视觉}仅位于画面{下方 N% 的区域}，不替换、重排或回退当前商品内容。其余内容不变。
+```
+
+For `会员` A/S 2:1 ordinary-product slot foreground, do not use the loose scope `商品组整体`: it can accidentally scale coins and ribbons or redraw the front gift-box wall. When the repair is to reduce and lower the four products and the rear box body, use this exact prompt:
+
+```text
+以当前图为唯一编辑目标。仅将礼盒内的四件商品及其后方礼盒主体整体等比缩小并下移，使四件商品最高点落在画面高度约 70% 以下；金币、丝带、现有礼盒前侧边缘不参与编辑，四件商品的相对位置、遮挡关系和倾斜方向保持不变，前侧不得新增、扩展或露出礼盒壁。其余内容不变。
 ```
 
 For `biz_consumer_electronics / 消费电子`, targeted regeneration must be especially narrow. Use this local-patch shape:
@@ -341,7 +355,7 @@ Use when title/subtitle spacing, line break, perspective, heavy text effects, ob
 For title line-break failures, keep the correction narrow:
 
 ```text
-请基于上一版重新生成。除本次修正项外，其余画面保持上一版不变。仅修正主标题折行：横版 4:3 / 16:9 中主标题超过 4 个汉字时按语义拆成两行；2:1 横版主标题优先单行，只有长标题挤压商品区或影响可读性时才按语义拆成两行。当前标题具体拆为「{第一行}」和「{第二行}」；每行保留完整词组、标点、品牌名、品类名、数字权益或固定短语。不要重新设计商品、背景、构图、色彩、光影、副标题、标签或装饰元素。
+请基于上一版重新生成。除本次修正项外，其余画面保持上一版不变。仅修正主标题折行：横版 4:3 / 16:9 中主标题超过 4 个汉字时按语义拆成两行；2:1 横版先测量当前路线的单行可见宽度，只有超过路线最大宽度时才按语义拆成两行。当前标题具体拆为「{第一行}」和「{第二行}」；每行保留完整词组、标点、品牌名、品类名、数字权益或固定短语。不要重新设计商品、背景、构图、色彩、光影、副标题、标签或装饰元素。
 ```
 
 ### Text Readability Correction
