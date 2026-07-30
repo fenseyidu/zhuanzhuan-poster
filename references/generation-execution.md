@@ -328,7 +328,7 @@ For `biz_consumer_electronics / 消费电子`, targeted regeneration must be esp
 {具体失败点}。{只写这一个失败点的直接动作}。其余内容不变。
 ```
 
-If an AI image generation tool is available and the user asked to generate an image, use the targeted correction prompt to regenerate one version. If regeneration is not available, output the targeted correction prompt for the user.
+If an AI image generation tool is available and the user asked to generate an image, use the targeted correction prompt to regenerate one version. For `会员` image generation, the membership retry policy overrides this default: automatically allow up to two targeted regenerations, QA after each, then stop and state the blocker if the second still fails; do not ask whether to continue. If regeneration is not available, output the targeted correction prompt for the user.
 
 When the failed layer is `商品层` and the generated product does not match the uploaded product image, use the fixed short correction prompt below instead of rewriting the original creative brief or expanding the failure details into a long patch prompt. In multi-product tasks, check every object in QA, but submit only the specific product failure being corrected.
 
@@ -355,7 +355,7 @@ Use when title/subtitle spacing, line break, perspective, heavy text effects, ob
 For title line-break failures, keep the correction narrow:
 
 ```text
-请基于上一版重新生成。除本次修正项外，其余画面保持上一版不变。仅修正主标题折行：横版 4:3 / 16:9 中主标题超过 4 个汉字时按语义拆成两行；2:1 横版先测量当前路线的单行可见宽度，只有超过路线最大宽度时才按语义拆成两行。当前标题具体拆为「{第一行}」和「{第二行}」；每行保留完整词组、标点、品牌名、品类名、数字权益或固定短语。不要重新设计商品、背景、构图、色彩、光影、副标题、标签或装饰元素。
+请基于上一版重新生成。除本次修正项外，其余画面保持上一版不变。仅修正主标题：横版 4:3 / 16:9 中主标题超过 4 个汉字时按语义拆成两行；会员 A/S 的 2:1 主标题超过 908px（1125px 参考宽度）时保持单行并等比缩小字号；会员 B 的 2:1 主标题超过 590px 时按语义拆成两行。需要折行时，每行保留完整词组、标点、品牌名、品类名、数字权益或固定短语。不要重新设计商品、背景、构图、色彩、光影、副标题、标签或装饰元素。
 ```
 
 ### Text Readability Correction

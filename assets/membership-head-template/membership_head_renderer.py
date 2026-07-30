@@ -92,19 +92,16 @@ def paste_tinted_mask(canvas, source, box, color):
     canvas.alpha_composite(image, (box['x'], box['y']))
 
 def paste_tinted_title(canvas, source, box, color, visible_height, max_visible_width=None):
-    """Crop alpha padding, preserve the MasterGo title height, and derive width from its ratio."""
+    """Crop alpha padding and fit the title inside its height and width limits."""
     alpha = Image.open(source).convert('RGBA').getchannel('A')
     bounds = alpha.getbbox()
     if not bounds:
         raise SystemExit('Title asset has no visible alpha content')
     alpha = alpha.crop(bounds)
     scale = visible_height / alpha.height
-    size = (round(alpha.width * scale), visible_height)
-    if max_visible_width is not None and size[0] > max_visible_width:
-        raise SystemExit(
-            f'Title asset visible width {size[0]} exceeds configured maximum {max_visible_width}; '
-            'render a semantically wrapped title asset before composition'
-        )
+    if max_visible_width is not None:
+        scale = min(scale, max_visible_width / alpha.width)
+    size = (round(alpha.width * scale), round(alpha.height * scale))
     alpha = alpha.resize(size, Image.Resampling.LANCZOS)
     image = Image.new('RGBA', size, color + (0,))
     image.putalpha(alpha)

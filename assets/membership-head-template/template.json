@@ -33,13 +33,12 @@
       "reference_width": 1125,
       "font_size": 110,
       "max_width": 908,
-      "max_lines": 2,
-      "line_height": 120,
-      "overflow_behavior": "semantic_wrap"
+      "overflow_behavior": "shrink_to_fit",
+      "line_break_behavior": "never"
     },
     "asset_requirement": "标题专用生图完成后必须提供透明背景的 PNG；只保留毛笔字，不得包含暖金背景、商品、会员标识、日期、规则或底波浪。合成器会按可见 alpha 内容裁切后等比缩放并居中，禁止把整张源画布强制拉伸至标题框。",
     "color_behavior": "合成器只使用标题 PNG 的 alpha 通道；默认使用 MasterGo 参考色 #7E4504，用户可用 title-color 覆盖。",
-    "size_behavior": "标题资产按 layout.reference_width 等比换算；先以 layout.font_size 和 layout.max_width 排版，单行可见宽度超过 max_width 时按语义折行，最多 max_lines 行。合成器只接受宽度不超过 max_visible_width 的资产；标题整体可见高度固定为 visible_height，宽度由裁切后的 alpha 内容等比自适应，禁止强制填满 box.width。"
+    "size_behavior": "标题资产按 layout.reference_width 等比换算；先以 layout.font_size 单行排版，单行可见宽度超过 layout.max_width 时等比缩小字号至适配，不折行。合成器以 visible_height 和 max_visible_width 为上限等比缩放裁切后的 alpha 内容，禁止强制填满 box.width。"
   },
   "membership_b_brand_layer": {
     "asset": "member-b-brand.png",

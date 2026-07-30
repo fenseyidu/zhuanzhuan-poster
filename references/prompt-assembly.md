@@ -128,7 +128,7 @@ When `business_line_id=biz_membership`, `category_id=cat_membership_day`, and pr
 
 For `format_id=fmt_landscape_2_1`, require a poster base without the main title and subtitle. This applies only to the title group: all visible text, icons, and screen content that belong to the uploaded products must remain unchanged. Do not mention a membership-mark area, reservation, placeholder, or extra upper-left whitespace in the final Prompt. After generation, run `text_layout_renderer.py --profile membership-b-2x1 --trace-output <title-layout.json>`, then let `membership_head_renderer.py --mode membership-b --title-layout <title-layout.json>` add `member-b-brand.png` above the local title. Do not ask the image model to draw, imitate, recolor, or regenerate the membership mark.
 
-For `biz_membership` B in `fmt_landscape_2_1`, add these requirements to the final Prompt: `以 1125×562 的 2:1 画布为基准，海报底图不生成主标题和副标题；商品本体及其屏幕、机身、包装上的原有文字、图标和界面内容必须保留。主视觉商品组紧凑地限定在画面右侧 57%–94%、纵向 32%–84% 的区域内，错落陈列且不侵入左侧标题阅读区，不铺满右半屏，不贴边。`
+For `biz_membership` B in `fmt_landscape_2_1`, add these requirements to the final Prompt: `以 1125×562 的 2:1 画布为基准，海报底图不生成主标题和副标题；商品本体及其屏幕、机身、包装上的原有文字、图标和界面内容必须保留。左侧 60% 保持连续、干净的背景与完整文字阅读动线；主视觉商品群整体集中在右侧 40%（x=60%–100%）内，纵向错落陈列并保留画布边缘安全距离，不侵入左侧文字区域，不铺满主视觉区。`
 
 For `biz_membership + cat_membership_day + B`, fully inherit the recycle B visual product route. With two or more physical product assets, use the visual geometry of `combo_multi_recyclable`: two products keep reasonable near-equal visual weight without a forced main/support hierarchy and are staggered through front/back, high/low, offset bottom edges, size, angle, light perspective, or slight overlap; three or more products may use one clearer main object. All products share one continuous light space, one light direction, and either no support surface or one continuous support surface; do not use a card matrix, multiple separated podiums, aligned bottom edges, equal-height side-by-side placement, or an ordinary sale-product pairing. Describe this in the final Prompt as a `会员活动多商品主视觉`, never as recycle coverage or recycle service; do not add recycle estimates, inspection, payment, service trust, or other recycle wording.
 
@@ -374,10 +374,10 @@ When `format_id=fmt_landscape_4_3` or `format_id=fmt_landscape_16_9` and the mai
 主标题超过 4 个汉字时，默认按语义拆成两行标题组，每行保留完整词组，不拆断品牌名、品类名、数字权益或固定短语；在最终 Prompt 中明确写出两行标题，例如：主标题按两行展示：「第一行」和「第二行」。
 ```
 
-When `format_id=fmt_landscape_2_1`, apply the route-owned maximum title width before deciding a line break. For `会员` A/S use 908px at a 1125px-wide reference canvas; for `会员` B use 590px at the same reference width. If the one-line visible width exceeds that route maximum, add this title handling rule and write the concrete semantic split:
+When `format_id=fmt_landscape_2_1`, apply the route-owned maximum title width. For `会员` A/S use 908px at a 1125px-wide reference canvas: keep one line and proportionally reduce the title size only if it exceeds that width. For `会员` B use 590px at the same reference width: if the one-line visible width exceeds that maximum, add this title handling rule and write the concrete semantic split:
 
 ```text
-2:1 横版先测量主标题的单行可见宽度；仅当它超过当前路线的最大宽度时，才按语义拆成两行标题组。每行保留完整词组、标点和固定短语；在最终 Prompt 中明确写出两行标题，例如：主标题按两行展示：「第一行」和「第二行」。
+会员 B 2:1 横版先测量主标题的单行可见宽度；仅当它超过 590px 时，才按语义拆成两行标题组。每行保留完整词组、标点和固定短语；在最终 Prompt 中明确写出两行标题，例如：主标题按两行展示：「第一行」和「第二行」。会员 A/S 2:1 超过 908px 时保持单行并按比例缩小字号。
 ```
 
 When `business_line_id=biz_recycle`, `format_id=fmt_landscape_2_1`, and the user explicitly provides `label_text`, render it as an optional top label above the main title. Do not infer or auto-generate a label when the field is absent.
@@ -468,7 +468,7 @@ Before finalizing, run this Pre-output self-check for prompt assembly. Post-gene
 - benefit, selling-point, and service information stays light: short text, subtle separators, centered dots, or low-presence information lines; consumer electronics should not use icon cards, benefit cards, selling-point cards, button-like modules, or obvious UI containers
 - for 1:1 square posters, the main title is kept as a complete single-line title unless the user explicitly asks for line breaks
 - for 4:3 and 16:9 landscape posters, if the main title is longer than 4 Chinese characters, it is handled as a semantic two-line title group
-- for 2:1 landscape posters, the main title stays single-line when readable and uses a semantic two-line title group only when a long line would squeeze product space or reduce readability
+- for 2:1 landscape posters, follow the active route’s title-overflow policy rather than product-space pressure: 会员 A/S keeps one line and shrinks after 908px at 1125px reference width; 会员 B wraps semantically after 590px
 - user-provided copy uses one carrier only; no repeated subtitle/list copy across title area and cards
 - format matches the requested ratio and reading flow
 - no unprovided readable factual information such as price, ranking, model, date, or service promise appears
