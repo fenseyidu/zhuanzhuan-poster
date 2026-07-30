@@ -155,7 +155,7 @@ When `business_line_id=biz_membership`, `category_id=cat_membership_day`, `forma
 Build the AI-base prompt from one shared block and exactly one lower-foreground block. Do not combine the direct gift foreground with the inside-box slot foreground.
 
 ```text
-以输入的无标题会员日暖金母版为唯一编辑目标。保留原画布比例、连续暖金背景、下方前景贴底位置、金币、透视、光影与阴影；标题框、会员标识、日期、规则和底波浪区域保持干净。下方主视觉区域整体限定在距画面顶部 70% 至底边的区域内。AI 底图中不要生成主标题、会员日标识、日期、副标题、规则按钮、规则文字、底部波浪；海报场景中不要新增人物、手部、卡片、价格、折扣、排名、服务承诺、第三方会员卡。
+以输入的无标题会员日暖金母版为唯一编辑目标。保留原画布比例、连续暖金背景、下方前景贴底位置、金币、透视、光影与阴影；画面上方约 68% 呈现连续、干净、舒展的暖金文字阅读背景；商品主体、低矮打开的礼盒、金币与丝带以紧凑的贴底层叠组合呈现在下方约 32% 区域。AI 底图中不要生成主标题、会员日标识、日期、副标题、规则按钮、规则文字、底部波浪；海报场景中不要新增人物、手部、卡片、价格、折扣、排名、服务承诺、第三方会员卡。
 ```
 
 Use one of these lower-foreground blocks:
