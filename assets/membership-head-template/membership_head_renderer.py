@@ -257,6 +257,7 @@ def main():
     p.add_argument('--mode', choices=('membership-as', 'membership-b'), default='membership-as')
     p.add_argument('--base-image', required=True)
     p.add_argument('--title-asset', help='Transparent PNG containing only the approved A/S title-only generation result.')
+    p.add_argument('--special-title', action='store_true', help='Use the special-title layout: fixed visible height with no width cap.')
     p.add_argument('--title-color', help='A/S title override; for Membership B, use only as an explicit fallback when generated-title color measurement fails.')
     p.add_argument('--brand-asset', default=str(ROOT / 'member-day-brand-mask.png'), help='MasterGo top-mark alpha-mask PNG asset.')
     p.add_argument('--brand-color', help='Optional #RRGGBB override for the member-day mark and date.')
@@ -316,9 +317,12 @@ def main():
     else:
         brand_color, brand_trace = resolve_text_color(base, brand, contrast_config['minimum_contrast']['brand'], contrast_config)
         date_color, date_trace = resolve_text_color(base, date, contrast_config['minimum_contrast']['date'], contrast_config)
+    special_title_layout = title.get('special_title_layout', {}) if args.special_title else {}
+    title_visible_height = special_title_layout.get('visible_height', title.get('visible_height', title_box['height']))
+    title_max_visible_width = special_title_layout.get('max_visible_width', title.get('max_visible_width'))
     paste_tinted_title(
         base, args.title_asset, title_box, title_color,
-        title.get('visible_height', title_box['height']), title.get('max_visible_width'),
+        title_visible_height, title_max_visible_width,
     )
     rb = cfg['rule_button']; local = sample(base, (rb['x']-30, rb['y'], w, min(h, rb['y']+rb['height'])))
     button = shade(local, .25 if luminance(local) > .52 else .77)

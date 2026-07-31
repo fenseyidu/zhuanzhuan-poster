@@ -29,6 +29,11 @@
     "box": {"x": 217, "y": 360, "width": 1816, "height": 324},
     "visible_height": 220,
     "max_visible_width": 1816,
+    "special_title_layout": {
+      "visible_height": 268,
+      "max_visible_width": null,
+      "behavior": "仅补充要求包含特殊字时使用：按裁切后的可见 alpha 内容固定为 268px 高，不限制最大可见宽度，保持等比缩放并居中。"
+    },
     "layout": {
       "reference_width": 1125,
       "font_size": 110,

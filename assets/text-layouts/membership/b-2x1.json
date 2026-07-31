@@ -20,7 +20,7 @@
     "max_width": 410,
     "max_lines": 3,
     "line_height": 55,
-    "title_gap": 17,
+    "title_gap": 64,
     "color": "#3D3D3D"
   }
 }

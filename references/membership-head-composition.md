@@ -13,7 +13,7 @@ The only layout source is `195067020342135 / 119:1428`. The required exports are
 | `SourceHanSerifSC-Heavy.otf` | `fonts/SourceHanSerifSC-Heavy.otf` | default font for the entire main title |
 | `Clipboard_Screenshot_1785134069` / `119:1743` | `member-day-brand-mask.png` | fixed member-day mark alpha mask |
 
-The source title reference reads `狂欢开启 惊喜到周末`. It is never copied into a task with a different main title. Use it only as the style reference for a dedicated title-only generation when `补充要求` contains `特殊字`.
+The source title reference reads `狂欢开启 惊喜到周末`. It is never copied into a task with a different main title. Use it only as the style reference for a dedicated title-only generation when `补充要求` contains `特殊字`. For this special-title route, crop to the visible alpha and scale it to exactly 268px visible height on the 2250px output canvas; do not impose a width limit.
 
 ## Layer Contract
 
@@ -37,7 +37,7 @@ For a fixed campaign title, skip title generation and use the approved transpare
 
 ## Title Asset Placement
 
-The renderer must use the title PNG's alpha channel only. First crop to its non-transparent alpha bounds, then set its visible height exactly to `title_layer.visible_height`; derive its width proportionally from its visible alpha bounds and center it. Reject an asset whose visible width exceeds `title_layer.max_visible_width`. Do not resize the complete source canvas directly to the title box or force a title to fill the fixed width: title-only images often contain unequal transparent padding, and non-uniform source-to-box scaling visibly compresses or widens brush strokes. Reject an asset with no visible alpha content.
+The renderer must use the title PNG's alpha channel only. First crop to its non-transparent alpha bounds, then set its visible height exactly to `title_layer.visible_height`; derive its width proportionally from its visible alpha bounds and center it. Reject a default title asset whose visible width exceeds `title_layer.max_visible_width`. When `补充要求` contains `特殊字`, pass `--special-title`: its visible alpha is scaled to the fixed 268px height and is not width-limited. Do not resize the complete source canvas directly to the title box or force a title to fill the fixed width: title-only images often contain unequal transparent padding, and non-uniform source-to-box scaling visibly compresses or widens brush strokes. Reject an asset with no visible alpha content.
 
 ## Renderer
 
@@ -50,6 +50,8 @@ python3 assets/membership-head-template/membership_head_renderer.py \
   --date-text <date-copy> \
   --output <final.png>
 ```
+
+When `补充要求` contains `特殊字`, add `--special-title` to that command. This route scales the cropped alpha to exactly 268px visible height and does not apply a maximum-width limit.
 
 Use `--title-color #RRGGBB` only for an explicitly requested title color. Use `--brand-color #RRGGBB` only when the member-day mark/date also need an explicitly requested color. Otherwise, the compositor renders the title, member-day mark, and date in the bundled MasterGo reference color `#7E4504`; it does not auto-switch these colors by local contrast. Every text layer stays one pure color, never a gradient or segmented color.
 
