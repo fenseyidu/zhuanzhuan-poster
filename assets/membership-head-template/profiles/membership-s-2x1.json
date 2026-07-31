@@ -7,7 +7,7 @@
       "asset": "../source/membership-s-christmas-background-master.png",
       "mastergo_file_id": "195067020342135",
       "mastergo_layer_id": "146:1113",
-      "purpose": "圣诞 S 的无文字图生图底图参考；保留左侧阅读区、右侧星冠光树与礼赠焦点的空间关系。商品可按已选组合替换或扩展，文字和标识永远由 renderer 后置。"
+      "purpose": "圣诞 S 的图生图参考；保留左侧阅读区、右侧星冠光树与礼赠焦点的空间关系。0 商品时按节点礼赠组合重构右下礼赠群，1–4 个商品时按已选商品组合替换或扩展，主标题、副标题和会员标识由 renderer 后置。"
     }
   },
   "text_region": {

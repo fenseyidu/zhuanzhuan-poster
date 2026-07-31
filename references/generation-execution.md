@@ -404,6 +404,14 @@ Use when background is disconnected, cluttered, too template-like, or not suppor
 请基于上一版重新生成。除本次修正项外，其余画面保持上一版不变。仅修正背景层：{具体背景失败点}。修正方式：{只修复背景断裂、杂乱、模板化、光源/透视/阴影/色彩不统一等失败点}。不要重新设计其他已通过部分。
 ```
 
+### Membership S Christmas Light-integration Correction
+
+Use only when `biz_membership + cat_membership_day + S + 圣诞` has supplied products that look pasted in front of the light tree, are oversized, or use incompatible lighting. This is a combined product/background failure; do not use the generic product-identity or background template first.
+
+```text
+以当前图为唯一编辑目标。仅将右侧商品组等比缩小并收进光树下部内侧的香槟金体积光中，使商品上方、前侧和边缘共享树光，底部与金色颗粒地面连成连续反射和柔和接触阴影；商品身份及彼此相对关系保持不变。其余内容不变。
+```
+
 ### Background Main Color Correction
 
 Use when a consumer-electronics image has a clear product accent color, screen main color, brand color, or specified main color, but the largest background color area still reads as black, white, gray, or cold neutral.

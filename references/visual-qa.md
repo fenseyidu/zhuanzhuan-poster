@@ -133,6 +133,7 @@ PASS:
 - For two or more uploaded products or distinct product subjects, each object remains independently recognizable after direct comparison with its corresponding source asset, and each object's passed layout attributes remain stable: size, position, angle, front/back hierarchy, crop boundary, and occlusion state do not drift without a task-driven reason.
 - For `combo_multi_recyclable / 多品类回收组合`, multiple recyclable categories form a product-led staggered group by default. With exactly 2 products, both products have reasonable visual weight without a forced main/support hierarchy, and they show clear stagger through front/back, high/low, visibly offset bottom edges, size, angle, light perspective, or slight overlap. With 3 or more products, one main object may be larger and clearer while supporting objects have readable front/back, high/low, size, angle, or light-perspective variation. All objects still read as one recycle coverage group.
 - For `biz_membership + cat_membership_day + B`, apply the preceding `combo_multi_recyclable` geometry as a visual parent rule. All products must read as one membership activity product group, not recycle coverage, and no recycle service wording may appear.
+- For `biz_membership + cat_membership_day + S + 圣诞` with supplied products, the product group is compact and visibly enclosed by the lower inner volume of the light tree, rather than merely positioned in front of it. The tree's soft champagne-gold light wraps the group’s upper/front planes and selected edges; all products share one warm-gold ground reflection, fine particle transition, and soft contact shadow. The light tree remains legible as the environmental subject and is not reduced to a backdrop behind an oversized product lineup.
 - For `game_multi_character_visual`, user-provided game characters or role illustrations remain separate role subjects in a role-group visual; light primary/support hierarchy is allowed, but each source character remains independently recognizable.
 - For multiple collectible toys, one or a small group may be visually primary while supporting toys are arranged as companions with clear spacing, scale, height, or foreground/background rhythm.
 
@@ -148,6 +149,7 @@ FAIL:
 - In a multi-product task, one object is repaired while another provided object drifts in size, position, angle, front/back hierarchy, crop boundary, or key identifying features; this still fails `商品层` even if the edited object improves.
 - For `combo_multi_recyclable / 多品类回收组合`, products are forced into an equal-weight rigid card grid, isolated on separate platforms, scattered randomly, arranged with aligned lower edges or equal-height side-by-side placement when there are exactly 2 products, or arranged like ordinary sale merchandise rather than recycle coverage.
 - For `biz_membership + cat_membership_day + B`, the inherited recycle B visual geometry is absent, or the image introduces recycle coverage/service wording, multiple separated podiums, a card matrix, aligned lower edges, equal-height side-by-side placement, or an ordinary sale-product pairing.
+- For `biz_membership + cat_membership_day + S + 圣诞` with supplied products, the group is oversized enough to crowd the cone or make the light tree a backdrop; sits in front of rather than inside the tree’s lower light volume; has cold/independent studio lighting, hard cutout edges, isolated shadow, or a ground transition disconnected from the gold particle field. Mark this as `商品层 + 背景层` and use the dedicated light-integration correction.
 - Multiple user-provided game characters or role illustrations are fused into one new character, collapsed into a single body/look, dropped entirely, or reduced to generic background decoration instead of a coordinated role-group visual.
 - Multiple collectible toys are averaged into the same weight, stuffed into cards without hierarchy, scattered randomly, or arranged so decorations become more important than the toys.
 
@@ -276,6 +278,7 @@ Use this mapping after a FAIL:
 - Product Layer -> `Product Layer Correction` in `generation-execution.md`
 - Information Module Layer -> `Information Module Correction` in `generation-execution.md`
 - Background Layer -> `Background Layer Correction` in `generation-execution.md`
+- 会员 S 圣诞商品光场融合失败 -> `Membership S Christmas Light-integration Correction` in `generation-execution.md`
 - Consumer-electronics background main-color failure -> `Background Main Color Correction` in `generation-execution.md`
 - Composition Layer -> `Composition Layer Correction` in `generation-execution.md`
 - Visual Expression Mode Layer -> `Composition Layer Correction` or `Background Layer Correction`, depending on the visible failure
