@@ -83,14 +83,19 @@ def wrap_text(draw, text, font, max_width, prefer_semantic_breaks=False):
         segments = re.findall(r"\S+\s*|[，。！？；：]+", paragraph)
         for segment in segments:
             candidate = line + segment
+            segment_too_wide = draw.textbbox((0, 0), segment, font=font)[2] > max_width
             if line and draw.textbbox((0, 0), candidate, font=font)[2] > max_width:
                 lines.append(line.rstrip())
-                if draw.textbbox((0, 0), segment, font=font)[2] > max_width:
+                if segment_too_wide:
                     wrapped = wrap_characters(draw, segment, font, max_width)
                     lines.extend(wrapped[:-1])
                     line = wrapped[-1]
                 else:
                     line = segment
+            elif not line and segment_too_wide:
+                wrapped = wrap_characters(draw, segment, font, max_width)
+                lines.extend(wrapped[:-1])
+                line = wrapped[-1]
             else:
                 line = candidate
         if line or not paragraph:
@@ -98,10 +103,10 @@ def wrap_text(draw, text, font, max_width, prefer_semantic_breaks=False):
     return lines
 
 
-def render_lines(image, spec, text, scale, profile_path, y_override=None):
+def resolve_lines(image, spec, text, scale, profile_path):
     draw = ImageDraw.Draw(image)
-    max_lines = spec.get("max_lines")
     font_path = str((profile_path.parent / spec["font"]).resolve())
+    max_lines = spec.get("max_lines")
     min_font_size = spec.get("min_font_size", spec["font_size"])
     for source_size in range(spec["font_size"], min_font_size - 1, -1):
         font = ImageFont.truetype(font_path, round(source_size * scale))
@@ -116,6 +121,11 @@ def render_lines(image, spec, text, scale, profile_path, y_override=None):
             break
     else:
         raise SystemExit(f"text needs more than {max_lines} lines at the profile minimum font size")
+    return font, lines
+
+
+def render_lines(image, spec, font, lines, scale, y_override=None):
+    draw = ImageDraw.Draw(image)
     x = round((spec["x"] + spec.get("x_offset", 0)) * scale)
     base_y = spec["y"] + spec.get("y_offset", 0) if y_override is None else y_override
     y = round(base_y * scale)
@@ -128,6 +138,50 @@ def render_lines(image, spec, text, scale, profile_path, y_override=None):
         visible_boxes.append({"x": x, "y": visible_y, "width": right - left, "height": bottom - top})
     return {"lines": lines, "fontSize": font.size, "color": spec["color"], "visibleBoxes": visible_boxes,
             "bottom": y + max(0, len(lines) - 1) * line_height + max((box["height"] for box in visible_boxes), default=0)}
+
+
+def visible_block_height(image, font, lines, line_height):
+    draw = ImageDraw.Draw(image)
+    return max(
+        (index * line_height + draw.textbbox((0, 0), line, font=font)[3] - draw.textbbox((0, 0), line, font=font)[1]
+         for index, line in enumerate(lines)),
+        default=0,
+    )
+
+
+def resolve_centered_vertical_group(profile, image, title_font, title_lines, subtitle_font, subtitle_lines, scale):
+    """Position a member logo/title/subtitle group by visible ink bounds."""
+    group = profile.get("vertical_group")
+    if not group:
+        title_y = profile["title"]["y"] + profile["title"].get("y_offset", 0)
+        subtitle_y = (title_y + len(title_lines) * profile["title"]["line_height"]
+                      + profile["subtitle"]["title_gap"] + profile["subtitle"].get("y_offset", 0))
+        return title_y, subtitle_y, None
+
+    if group.get("alignment") != "vertical_center":
+        raise SystemExit(f"unsupported vertical group alignment: {group.get('alignment')!r}")
+
+    title_height = visible_block_height(
+        image, title_font, title_lines, round(profile["title"]["line_height"] * scale)
+    ) / scale
+    subtitle_height = visible_block_height(
+        image, subtitle_font, subtitle_lines, round(profile["subtitle"]["line_height"] * scale)
+    ) / scale if subtitle_lines else 0
+    subtitle_gap = profile["subtitle"]["title_gap"] if subtitle_lines else 0
+    leading_height = group["brand_visible_height"] + group["brand_title_gap"]
+    total_height = leading_height + title_height + subtitle_gap + subtitle_height
+    group_top = group["center_y"] - total_height / 2
+    title_y = group_top + leading_height
+    subtitle_y = title_y + title_height + subtitle_gap
+    group_trace = {
+        "alignment": group["alignment"],
+        "centerY": group["center_y"],
+        "top": group_top,
+        "bottom": group_top + total_height,
+        "brandVisibleHeight": group["brand_visible_height"],
+        "brandTitleGap": group["brand_title_gap"],
+    }
+    return title_y, subtitle_y, group_trace
 
 
 def main():
@@ -144,17 +198,19 @@ def main():
     image = Image.open(args.base_image).convert("RGBA")
     scale = image.width / profile["reference_width"]
 
-    title = render_lines(image, profile["title"], args.title, scale, profile_path)
-    subtitle_y = (profile["title"]["y"] + profile["title"].get("y_offset", 0)
-                  + len(title["lines"]) * profile["title"]["line_height"]
-                  + profile["subtitle"]["title_gap"] + profile["subtitle"].get("y_offset", 0))
-    subtitle = render_lines(image, profile["subtitle"], args.subtitle, scale, profile_path, subtitle_y)
+    title_font, title_lines = resolve_lines(image, profile["title"], args.title, scale, profile_path)
+    subtitle_font, subtitle_lines = resolve_lines(image, profile["subtitle"], args.subtitle, scale, profile_path)
+    title_y, subtitle_y, group_trace = resolve_centered_vertical_group(
+        profile, image, title_font, title_lines, subtitle_font, subtitle_lines, scale
+    )
+    title = render_lines(image, profile["title"], title_font, title_lines, scale, title_y)
+    subtitle = render_lines(image, profile["subtitle"], subtitle_font, subtitle_lines, scale, subtitle_y)
 
     output = Path(args.output).with_suffix(".png")
     output.parent.mkdir(parents=True, exist_ok=True)
     image.convert("RGB").save(output, "PNG")
     trace = {"png": str(output), "profile": str(profile_path), "scale": scale,
-             "title": title, "subtitle": subtitle}
+             "title": title, "subtitle": subtitle, "verticalGroup": group_trace}
     if args.trace_output:
         trace_output = Path(args.trace_output).with_suffix(".json")
         trace_output.parent.mkdir(parents=True, exist_ok=True)

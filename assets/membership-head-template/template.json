@@ -50,12 +50,12 @@
     "box": {"x": 225, "y": 205, "width": 640, "height": 110},
     "visible_height": 60,
     "format": "2:1",
-    "placement": "会员 B 2:1 使用左文右图版式；renderer 先测量生成图中的主标题可视边界，再将品牌标识左边线对齐标题左边线，并置于标题上方的安全间距内。不要在生成 Prompt 中要求任何标识预留区、占位块或额外留白；标识位置完全由 renderer 根据实测标题边界计算。",
+    "placement": "会员 B 2:1 使用左文右图版式；renderer 先测量生成图中的主标题可视边界，再将品牌标识左边线对齐标题左边线，并在最终 2250px 宽画布上保持 62px 的可见间距。会员标识、主标题与副标题作为一个整体垂直居中；主标题折行时重新计算整组位置。不要在生成 Prompt 中要求任何标识预留区、占位块或额外留白；标识位置完全由 renderer 根据实测标题边界计算。",
     "color_behavior": "renderer 只读取 brand PNG 的 alpha 通道。默认从生成图中的主标题实体像素提取代表色后着色；title-color 仅是检测失败时的显式回退，不作为默认工作流。",
     "title_measurement": {
       "search_box": {"x": 40, "y": 300, "width": 1280, "height": 260},
       "minimum_pixels": 600,
-      "vertical_gap": 46
+      "vertical_gap": 62
     }
   },
   "membership_b_layout": {

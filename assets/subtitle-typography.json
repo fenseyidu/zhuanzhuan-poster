@@ -2,6 +2,6 @@
   "reference_width": 1125,
   "font": "membership-head-template/fonts/Alibaba_PuHuiTi_2.0_55_Regular_55_Regular.ttf",
   "font_size": 40,
-  "title_gap": 64,
-  "rule": "仅已注册的 2:1 本地合成路线使用阿里巴巴普惠体常规本地绘制非空副标题。字号、主副标题间距均按实际画布宽度相对 1125px 等比缩放；其他规格由 AI 直接渲染副标题。"
+  "title_gap": 31,
+  "rule": "仅已注册的 2:1 本地合成路线使用阿里巴巴普惠体常规本地绘制非空副标题。会员 B 2:1 的主标题到底部副标题采用 31px（1125px 参考宽度）的可见文字间距，即 2250px 成图为 62px；字号与间距均按实际画布宽度相对 1125px 等比缩放。其他规格由 AI 直接渲染副标题。"
 }

@@ -13,6 +13,13 @@
     "line_height": 89,
     "color": "#111111"
   },
+  "vertical_group": {
+    "alignment": "vertical_center",
+    "center_y": 281.25,
+    "brand_visible_height": 30,
+    "brand_title_gap": 31,
+    "behavior": "会员标识、主标题和副标题作为一个整体在 2:1 画布中垂直居中。数值按 1125px 参考宽度定义，并与 2250px 成图中会员标识的 60px 高度、62px 标题间距对应。"
+  },
   "subtitle": {
     "font": "../../membership-head-template/fonts/Alibaba_PuHuiTi_2.0_55_Regular_55_Regular.ttf",
     "font_size": 40,
@@ -20,7 +27,7 @@
     "max_width": 410,
     "max_lines": 3,
     "line_height": 55,
-    "title_gap": 64,
+    "title_gap": 31,
     "color": "#3D3D3D"
   }
 }
