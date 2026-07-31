@@ -1,0 +1,60 @@
+{
+  "profile_id": "membership-s-2x1",
+  "canvas": {"width": 2250, "height": 1125},
+  "reference_canvas": {"width": 1125, "height": 562.5},
+  "image_to_image_references": {
+    "圣诞": {
+      "asset": "../source/membership-s-christmas-background-master.png",
+      "mastergo_file_id": "195067020342135",
+      "mastergo_layer_id": "146:1113",
+      "purpose": "圣诞 S 的无文字图生图底图参考；保留左侧阅读区、右侧星冠光树与礼赠焦点的空间关系。商品可按已选组合替换或扩展，文字和标识永远由 renderer 后置。"
+    }
+  },
+  "text_region": {
+    "x": 148,
+    "width": 1160,
+    "reference_width": 580,
+    "alignment": "horizontal_center",
+    "behavior": "主标题与副标题共用 MasterGo 左侧 580px 参考文字区；主标题始终单行，超过宽度时等比缩小字号适配；副标题超过宽度时折行，每行在该区域水平居中。"
+  },
+  "vertical_group": {
+    "center_y": 562.5,
+    "alignment": "vertical_center",
+    "logo_visible_height": 80,
+    "logo_title_gap": 28,
+    "title_line_height": 230,
+    "title_subtitle_gap": 28,
+    "subtitle_line_height": 110,
+    "behavior": "保持 MasterGo 的 logo→主标题→副标题相对间距；主标题固定单行，随副标题折行后的总高度重算整组位置，并在 2250×1125 成图中垂直居中。"
+  },
+  "title": {
+    "font_size": 160,
+    "font": "SourceHanSerifSC-Heavy.otf",
+    "overflow_policy": "single_line_shrink_to_fit"
+  },
+  "split_title": {
+    "left": {"x": 148, "width": 480},
+    "separator": {"text": "×", "x": 681, "width": 80, "font_size": 80},
+    "right": {"x": 813, "width": 480},
+    "behavior": "仅当输入主标题包含 X、x 或 × 且两侧都有文字时使用；沿用 MasterGo 左文案 × 右文案的布局。左右标题均保持单行，按较宽一侧等比缩小共同字号适配。"
+  },
+  "subtitle": {
+    "font_size": 80,
+    "font": "Alibaba_PuHuiTi_2.0_55_Regular_55_Regular.ttf"
+  },
+  "logo": {
+    "asset": "../member-day-brand-mask.png",
+    "reference_full_size": {"width": 316.07855224609375, "height": 40},
+    "x": 404.49,
+    "placement": "使用完整 brand mask 等比缩放并完整展示“转转会员日｜每月22日”；不得裁切或压缩为局部标识。"
+  },
+  "text_color": {
+    "candidates": {
+      "light": "#F4E2BC",
+      "dark": "#3D3D3D"
+    },
+    "minimum_contrast": 3.0,
+    "sampling_percentile": 0.5,
+    "sampling": "对 logo、标题和副标题的背景区域共同采样，选择中位对比度最高的候选色；用户显式指定 text-color 时才覆盖。"
+  }
+}

@@ -1,6 +1,6 @@
 # 会员日 2:1 合成
 
-Use this only for `biz_membership` A/S 2:1 heads. It never applies to `会员` B.
+Use this only for `biz_membership` A 2:1 heads. It never applies to `会员` B or `会员` S.
 
 ## MasterGo Source Assets
 
@@ -25,7 +25,7 @@ The final canvas is `2250x1125` and has three stages:
 
 Do not generate a title-and-foreground base and then erase the title. The MasterGo `bg` export is the title-free edit target/reference from the outset.
 
-The lower foreground stays in the bottom 30% (`y=788` to `1125`). Only the ordinary-product slot foreground uses the inside-box close-up and the 75%-width gift-box opening and low-side-corner target; this is a soft initial-composition target, not a fixed dimension for local edits. The active local template owns title geometry: at 1125px reference width, A/S uses a 110px title size with 908px maximum visible width. A one-line title that exceeds 908px stays on one line and proportionally reduces its font size before composition. On the 2250px output canvas, the title box is `(217,360,1816,324)` and the composited title group fits within a 220px visible-height limit; its visible ink must stay clear of the future member-day mark and date reservations.
+The lower foreground stays in the bottom 30% (`y=788` to `1125`). Only the ordinary-product slot foreground uses the inside-box close-up and the 75%-width gift-box opening and low-side-corner target; this is a soft initial-composition target, not a fixed dimension for local edits. The active local template owns title geometry: at 1125px reference width, A uses a 110px title size with 908px maximum visible width. A one-line title that exceeds 908px stays on one line and proportionally reduces its font size before composition. On the 2250px output canvas, the title box is `(217,360,1816,324)` and the composited title group fits within a 220px visible-height limit; its visible ink must stay clear of the future member-day mark and date reservations.
 
 The product slots, assignment rules, partial bottom emergence, coins, and small-toy handling in `template.json.product_slots` apply only to ordinary products. With 1–3 ordinary products retain the small toy and coins; with four products replace all four slots; stop and ask the user to reduce any selection over four products.
 

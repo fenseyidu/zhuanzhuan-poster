@@ -68,7 +68,7 @@ PASS:
 - Main title uses stable flat color or restrained tonal handling.
 - 1:1 square posters keep the main title as a complete single-line title unless the user explicitly asks for line breaks.
 - 4:3 and 16:9 landscape posters split main titles longer than 4 Chinese characters into semantic two-line title groups, while preserving complete words, brand names, category names, numeric benefits, and fixed phrases.
-- 2:1 landscape posters follow the active route's measured-width policy. For 会员 A/S, 110px / 908px at 1125px width means keep one line and proportionally shrink only after overflow; for 会员 B, 80px / 590px means split at a semantic boundary after overflow.
+- 2:1 landscape posters follow the active route's measured-width policy. For 会员 A, 110px / 908px at 1125px width means keep one line and proportionally shrink only after overflow. For 会员 S, use the registered 580px reference text region: keep the main title on one line and proportionally shrink it after overflow. For 会员 B, 80px / 590px means split at a semantic boundary after overflow.
 - For 回收 2:1 layouts, top labels appear only when the user explicitly provides label text; when present, the label stays above the main title and does not become a third slogan.
 - For `会员` B 2:1 layouts, the renderer-added member mark uses the inherited local-title color, is alpha-clean, is left-aligned with the local main-title box, and occupies the renderer-composed area above rather than becoming an AI-generated third slogan.
 - For `会员` B 2:1 layouts, member mark, main title, and non-empty subtitle form one vertically centered group. At the 2250px-wide final canvas, both adjacent visible gaps are 62px; a two-line title recomputes and re-centers the entire group while preserving those gaps.
@@ -89,7 +89,7 @@ FAIL:
 - Main title becomes visually clean but loses the selected business-line or category title personality, such as collectible-toy titles becoming hard-edged promotional Heiti or consumer-electronics titles losing modern display Songti / high-contrast Chinese Serif character.
 - 1:1 square poster forces a two-line title group without user request.
 - 4:3 or 16:9 landscape poster keeps a main title longer than 4 Chinese characters as a single long line, or any landscape poster breaks long titles in a way that damages complete words, punctuation, brand names, category names, numeric benefits, or fixed phrases.
-- 会员 A/S 2:1 poster wraps its title instead of shrinking it after the 908px reference-width limit, or 会员 B 2:1 poster keeps an over-590px title on one line instead of semantically wrapping it.
+- 会员 A 2:1 poster wraps its title instead of shrinking it after the 908px reference-width limit; 会员 S 2:1 poster wraps its main title instead of shrinking it inside the registered 580px reference text region; or 会员 B 2:1 poster keeps an over-590px title on one line instead of semantically wrapping it.
 - 回收 2:1 layout invents a top label when the user did not provide one, or makes a provided label more prominent than the main title.
 - `会员` B 2:1 member mark is AI-generated, has a different color from the recorded main-title color, has a visible opaque background, is misaligned with the main-title group, or collides with title, subtitle, product, or high-detail background content.
 - `会员` B 2:1 member mark → main-title or main-title → subtitle visible gap is not 62px at the final 2250px-wide canvas, or a wrapped title leaves the three-layer group at the single-line vertical position instead of re-centering it.

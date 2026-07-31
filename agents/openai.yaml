@@ -1,17 +1,7 @@
 interface:
   display_name: "转转海报 Prompt"
-  short_description: "转转运营海报生图与 Prompt 自动组装"
-  default_prompt: |
-    使用 $zhuanzhuan-poster-prompt 生成一张转转运营海报。
-
-    商品素材：
-    主标题：
-    副标题：没有就写“无”
-    装饰字：可选，没有可不写
-    视觉方案档位：自动 / B / A / S（可选）
-    业务线：N 品类 / 消费电子 / 回收
-    输出规格：1:1 / 4:3 / 16:9 / 2:1
-    补充要求：可选
+  short_description: "支持转转运营海报生图、参数组装与会员节点素材路由工作流"
+  default_prompt: "使用 $zhuanzhuan-poster-prompt 生成转转运营海报：填写商品素材、主标题、副标题、档位、会员节点（会员 S 时）、业务线和规格。"
 
 policy:
   allow_implicit_invocation: true

@@ -51,7 +51,7 @@ The final prompt should read like a reusable generation prompt, not like a param
 
 ## Main-title Typography
 
-Apply this rule after resolving category-specific typography. For `会员` A/S, write the entire main title as `思源宋体 SC Heavy（SourceHanSerifSC-Heavy.otf）`, with a front-facing, flat, solid-color layout. An A/S `补充要求` containing the exact phrase `特殊字` uses `member-day-title-style-reference.png` as the reference for the entire main-title glyph style. For `会员` B, write the entire main title as a modern display-Heiti treatment: front-facing, flat, solid-color, firm heavy strokes, and a stable center of gravity. Record the resolved title mode in review Markdown.
+Apply this rule after resolving category-specific typography. For `会员` A, write the entire main title as `思源宋体 SC Heavy（SourceHanSerifSC-Heavy.otf）`, with a front-facing, flat, solid-color layout. An A `补充要求` containing the exact phrase `特殊字` uses `member-day-title-style-reference.png` as the reference for the entire main-title glyph style. For `会员` S, typography follows the registered `membership-s-2x1` MasterGo renderer layout and does not reuse A title rules. For `会员` B, write the entire main title as a modern display-Heiti treatment: front-facing, flat, solid-color, firm heavy strokes, and a stable center of gravity. Record the resolved title mode in review Markdown.
 
 ## 2:1 Subtitle Typography
 
@@ -150,9 +150,9 @@ python3 assets/membership-head-template/membership_head_renderer.py \
   --output <final-poster.png>
 ```
 
-## Membership A/S 2:1 Image-to-Image Prompt
+## Membership A 2:1 Image-to-Image Prompt
 
-When `business_line_id=biz_membership`, `category_id=cat_membership_day`, `format_id=fmt_landscape_2_1`, and preset level is `A` or `S`, run two distinct image tasks. The saved title-free MasterGo background master is the AI-base edit target. Create a separate transparent title-only asset: render with `SourceHanSerifSC-Heavy.otf` by default; only when `补充要求` contains `特殊字`, use the saved brush-title PNG as the typography reference. Do not use a title-and-product image as the base and do not erase a generated title afterwards.
+When `business_line_id=biz_membership`, `category_id=cat_membership_day`, `format_id=fmt_landscape_2_1`, and preset level is `A`, run two distinct image tasks. The saved title-free MasterGo background master is the AI-base edit target. Create a separate transparent title-only asset: render with `SourceHanSerifSC-Heavy.otf` by default; only when `补充要求` contains `特殊字`, use the saved brush-title PNG as the typography reference. Do not use a title-and-product image as the base and do not erase a generated title afterwards.
 
 Build the AI-base prompt from one shared block and exactly one lower-foreground block. Do not combine the direct gift foreground with the inside-box slot foreground.
 
@@ -193,7 +193,7 @@ For the ordinary-product branch, build `{slot_replacement_map}` from `template.j
 
 With other supplied assets, use the template's `partial_upload_behavior`; the resulting foreground keeps the reference image's original product composition as a set of local substitutions. The member-day mark, date subtitle, rule button, rule text, and bottom wave are fixed compositor layers.
 
-## Membership A/S 2:1 Independent QA And Targeted Edit
+## Membership A 2:1 Independent QA And Targeted Edit
 
 Check the title-free base first: no title/fixed layers, and the foreground remains in `foreground_region`. With no supplied product assets, the foreground uses the default gift boxes, ribbons, and coins. With a single gift-box asset, the foreground keeps that default composition and the gift boxes preserve the uploaded asset's visible appearance. With other supplied assets, every supplied product stays in its named slot and the staggered foreground holds. A failure uses a product/base-only targeted edit.
 
@@ -206,6 +206,21 @@ If advanced test fields are explicitly provided, they override the matched prese
 ```text
 高级测试字段覆盖视觉方案档位：是
 ```
+
+## Membership S Node-theme Visual Resolution
+
+When `business_line_id=biz_membership`, `category_id=cat_membership_day`, `format_id=fmt_landscape_2_1`, and preset level is `S`, resolve `membership_theme` in this order: explicit `会员节点=圣诞|中秋`; then an exact node cue in the main title; then an exact node cue in the supplement. 圣诞 cues are `圣诞`、`平安夜`、`Christmas`、`Xmas`; 中秋 cues are `中秋`、`Mid-Autumn`. Broad mood words such as `团圆`、`惊喜`、`礼赠` do not select a node. If no exact cue exists, ask the user to choose 圣诞 or 中秋. Select `bg_membership_christmas_luminous_gift` for 圣诞 and `bg_membership_mid_autumn_moonlit` for 中秋.
+
+Resolve the product branch before writing the prompt:
+
+| Supplied product assets | Route |
+|-|-|
+| 0 | `combo_membership_seasonal_gift` |
+| 1 | `rel_single_hero` + `combo_single_hero` |
+| 2–4 with one clearly dominant product | `rel_primary_support` + `combo_single_hero` |
+| 2–4 without one clearly dominant product | `rel_multi_collection` + `combo_cross_category` |
+
+The selected background owns the left reading field, right-side theme focus, and shared theme light. The selected combination owns product hierarchy and arrangement. Write their positive visual language together; do not reuse the A warm-gold master, A gift-box slots, or A fixed-layer geometry. Before writing the AI-base prompt, check `membership-s-2x1.json.image_to_image_references` for the selected node. For 圣诞, use `source/membership-s-christmas-background-master.png` as the title-free image-to-image target: retain its left reading field and right star-crown/light-tree/gift spatial structure. With zero product assets, recompose the right-lower gift group through `combo_membership_seasonal_gift`. With product assets, replace that right-lower gift group as a whole with the already selected product combination; its hierarchy, arrangement and stagger geometry come only from the selected product relation/combination, while the resulting product group remains at the theme-focus base. Do not restate product-combination wording in the S route. Do not pass title, subtitle, or logo to the image model. After the S base passes visual QA, run `membership_s_renderer.py` with the registered `membership-s-2x1` profile. It fully displays the bundled `member-day-brand-mask.png` alpha mask and renders the exact `--title` and `--subtitle` inputs in their shared 580px reference text region; the main title stays single-line and proportionally shrinks to fit, while over-width subtitle text wraps and every subtitle line centers horizontally. A title containing X/x/× with non-empty text on both sides uses MasterGo's split “left × right” layout; both sides remain single-line at one fitted title size. A title without that separator is rendered as-is and does not gain ×. The logo/title/subtitle group recomputes around the same MasterGo gaps and stays vertically centered. `membership_theme` does not supply text. It selects one shared logo/text color from the background; `--text-color` is an explicit override only.
 
 ## Category-Specific References
 
@@ -376,10 +391,10 @@ When `format_id=fmt_landscape_4_3` or `format_id=fmt_landscape_16_9` and the mai
 主标题超过 4 个汉字时，默认按语义拆成两行标题组，每行保留完整词组，不拆断品牌名、品类名、数字权益或固定短语；在最终 Prompt 中明确写出两行标题，例如：主标题按两行展示：「第一行」和「第二行」。
 ```
 
-When `format_id=fmt_landscape_2_1`, apply the route-owned maximum title width. For `会员` A/S use 908px at a 1125px-wide reference canvas: keep one line and proportionally reduce the title size only if it exceeds that width. For `会员` B use 590px at the same reference width: if the one-line visible width exceeds that maximum, add this title handling rule and write the concrete semantic split:
+When `format_id=fmt_landscape_2_1`, apply the route-owned maximum title width. For `会员` A use 908px at a 1125px-wide reference canvas: keep one line and proportionally reduce the title size only if it exceeds that width. `会员` S uses its registered 580px MasterGo renderer text region: keep the main title single-line and proportionally shrink it to fit; the subtitle may wrap and centers each line. Only an explicit X/x/× in the title activates the split-title layout, whose two sides also remain single-line at one fitted size. For `会员` B use 590px at the same reference width: if the one-line visible width exceeds that maximum, add this title handling rule and write the concrete semantic split:
 
 ```text
-会员 B 2:1 横版先测量主标题的单行可见宽度；仅当它超过 590px 时，才按语义拆成两行标题组。每行保留完整词组、标点和固定短语；在最终 Prompt 中明确写出两行标题，例如：主标题按两行展示：「第一行」和「第二行」。会员 A/S 2:1 超过 908px 时保持单行并按比例缩小字号。
+会员 B 2:1 横版先测量主标题的单行可见宽度；仅当它超过 590px 时，才按语义拆成两行标题组。每行保留完整词组、标点和固定短语；在最终 Prompt 中明确写出两行标题，例如：主标题按两行展示：「第一行」和「第二行」。会员 A 2:1 超过 908px 时保持单行并按比例缩小字号。
 ```
 
 When `business_line_id=biz_recycle`, `format_id=fmt_landscape_2_1`, and the user explicitly provides `label_text`, render it as an optional top label above the main title. Do not infer or auto-generate a label when the field is absent.
@@ -470,7 +485,7 @@ Before finalizing, run this Pre-output self-check for prompt assembly. Post-gene
 - benefit, selling-point, and service information stays light: short text, subtle separators, centered dots, or low-presence information lines; consumer electronics should not use icon cards, benefit cards, selling-point cards, button-like modules, or obvious UI containers
 - for 1:1 square posters, the main title is kept as a complete single-line title unless the user explicitly asks for line breaks
 - for 4:3 and 16:9 landscape posters, if the main title is longer than 4 Chinese characters, it is handled as a semantic two-line title group
-- for 2:1 landscape posters, follow the active route’s title-overflow policy rather than product-space pressure: 会员 A/S keeps one line and shrinks after 908px at 1125px reference width; 会员 B wraps semantically after 590px
+- for 2:1 landscape posters, follow the active route’s title-overflow policy rather than product-space pressure: 会员 A keeps one line and shrinks after 908px at 1125px reference width; 会员 S keeps one line and shrinks inside its registered 580px reference text region; 会员 B wraps semantically after 590px
 - user-provided copy uses one carrier only; no repeated subtitle/list copy across title area and cards
 - format matches the requested ratio and reading flow
 - no unprovided readable factual information such as price, ranking, model, date, or service promise appears

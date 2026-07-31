@@ -7,7 +7,7 @@
 | `biz_n_category` | Interest consumption, professional gear, lifestyle and niche goods. | 内容审美、兴趣消费、商品专题感、轻生活方式或专业器材感。 | `neg_product_identity`, `neg_visual_clutter`, `neg_no_template_sale` |
 | `biz_consumer_electronics` | Consumer electronics sale and conversion. | 干净、专业、商品清晰、轻科技、轻量文字信息层、低到中装饰密度；文字系统偏现代广告标题宋体或当代高对比中文 Serif 气质。 | `neg_product_identity`, `neg_no_unprovided_facts`, `neg_no_brand_hallucination` |
 | `biz_recycle` | Idle item recycle service. | 可信、安全、简单省心、平台感、克制稳定；浅色简洁背景承托商品或回收对象，并继承少量产品自带色彩。 | `neg_business_recycle_not_sale`, `neg_service_claims_source`, `neg_no_unprovided_facts` |
-| `biz_membership` | 转转平台会员日与会员季节活动；不包含第三方会员充值、点卡或权益卡。 | 高级、温暖、克制的会员活动感；A/S 默认使用暖金质感图生图底图与固定代码合成层。 | `neg_no_unprovided_facts`, `neg_membership_no_fixed_layer_redraw`, `neg_membership_no_third_party_card` |
+| `biz_membership` | 转转平台会员日与会员季节活动；不包含第三方会员充值、点卡或权益卡。 | 高级、温暖、克制的会员活动感；A 使用暖金图生图底图与固定代码合成层，S 使用圣诞或中秋节点主题背景与通用商品关系。 | `neg_no_unprovided_facts`, `neg_membership_no_fixed_layer_redraw`, `neg_membership_no_third_party_card` |
 
 ## Visual Tone Inheritance
 

@@ -9,7 +9,7 @@
     "title": "#7E4504",
     "brand": "#7E4504",
     "date": "#7E4504",
-    "behavior": "会员 A/S 2:1 未提供明确颜色要求时，标题、会员日标识和日期统一沿用 bundled MasterGo 参考标题的 #7E4504；不按局部背景自动换色。title-color 或 brand-color 是显式覆盖。"
+    "behavior": "会员 A 2:1 未提供明确颜色要求时，标题、会员日标识和日期统一沿用 bundled MasterGo 参考标题的 #7E4504；不按局部背景自动换色。title-color 或 brand-color 是显式覆盖。"
   },
   "text_contrast": {
     "candidates": {"light": "#FFF8E8", "dark": "#2B180D"},
@@ -21,7 +21,7 @@
       "radius": 80,
       "blur_radius": 72
     },
-    "behavior": "兼容旧模板的对比度回退配置；当前会员 A/S 2:1 模板已配置 reference_text_colors，默认不启用自动换色。"
+    "behavior": "兼容旧模板的对比度回退配置；当前会员 A 2:1 模板已配置 reference_text_colors，默认不启用自动换色。"
   },
   "title_layer": {
     "style_reference": "member-day-title-style-reference.png",

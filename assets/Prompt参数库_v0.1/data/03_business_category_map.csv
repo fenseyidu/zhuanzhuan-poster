@@ -20,4 +20,4 @@
 "map_recycle_luxury","biz_recycle","cat_luxury","奢侈品回收对象，强调价值、安全、鉴定和平台信任。","medium","回收对象、价值鉴定、安全信任。","neg_business_recycle_not_sale|neg_service_claims_source|neg_no_unprovided_facts|neg_no_brand_hallucination",""
 "map_recycle_gold","biz_recycle","cat_gold","黄金回收对象，强调价值、鉴定、安全和打款可信。","medium","回收对象、价值鉴定、打款可信。","neg_business_recycle_not_sale|neg_service_claims_source|neg_no_unprovided_facts",""
 "map_recycle_general","biz_recycle","cat_general","回收综合品类，强调覆盖范围、服务流程和平台保障。","medium","回收覆盖、服务流程、平台保障。","neg_business_recycle_not_sale|neg_service_claims_source|neg_no_unprovided_facts|neg_visual_clutter",""
-"map_membership_day","biz_membership","cat_membership_day","平台会员日活动，强调活动主题、会员归属和高级温暖的视觉体验。","high","会员日、季节性会员活动、暖金高级活动背景、固定合成层。","neg_no_unprovided_facts|neg_membership_no_fixed_layer_redraw|neg_membership_no_third_party_card","A/S 通过图生图底图加代码合成输出；B 仅借用回收 B 档的视觉路径。"
+"map_membership_day","biz_membership","cat_membership_day","平台会员日活动，强调活动主题、会员归属和高级温暖的视觉体验。","high","常规会员日暖金活动背景，或圣诞/中秋节点主题背景；文字由 renderer 处理。","neg_no_unprovided_facts|neg_membership_no_fixed_layer_redraw|neg_membership_no_third_party_card","A 通过暖金图生图底图加代码合成输出；S 按会员节点选择主题背景并按商品关系组织商品；B 仅借用回收 B 档的视觉路径。"

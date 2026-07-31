@@ -13,12 +13,22 @@
     },
     "membership-as-2x1": {
       "business_line": "会员",
-      "preset_levels": ["A", "S"],
+      "preset_levels": ["A"],
       "format": "2:1",
       "pipeline": ["title_asset", "membership_head_renderer:membership-as"],
       "title_source": "transparent_title_asset",
       "subtitle_source": "membership_fixed_date_layer",
-      "purpose": "会员 A/S 使用标题专用透明 PNG 和固定会员日合成层，不可使用回收文字 profile。"
+      "purpose": "会员 A 使用标题专用透明 PNG 和固定会员日合成层，不可使用回收文字 profile。"
+    },
+    "membership-s-2x1": {
+      "business_line": "会员",
+      "preset_levels": ["S"],
+      "format": "2:1",
+      "pipeline": ["membership_s_renderer"],
+      "layout_profile": "../membership-head-template/profiles/membership-s-2x1.json",
+      "title_source": "local_text",
+      "subtitle_source": "local_text",
+      "purpose": "会员 S 的节点文字路线。根据 MasterGo 146:0998 放置完整会员标识、主标题和副标题；两段文案均由调用方传入。在同一 580px 参考文字区内自动折行并水平居中；主标题仅在包含 X/x/× 且两侧都有文字时拆成左右文案并显示 ×，否则原样渲染且不显示 ×。整组垂直居中，标识与文字颜色由 renderer 对背景采样后统一选择。"
     }
   }
 }
