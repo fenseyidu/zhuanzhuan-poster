@@ -406,10 +406,10 @@ Use when background is disconnected, cluttered, too template-like, or not suppor
 
 ### Membership S Christmas Light-integration Correction
 
-Use only when `biz_membership + cat_membership_day + S + 圣诞` has supplied products that look pasted in front of the light tree, are oversized, or use incompatible lighting. This is a combined product/background failure; do not use the generic product-identity or background template first.
+Use only when `biz_membership + cat_membership_day + S + 圣诞` has supplied products that look pasted in front of the light tree, are oversized, use incompatible lighting, or retain any default physical gift object. This is a combined product/background failure; do not use the generic product-identity or background template first.
 
 ```text
-以当前图为唯一编辑目标。仅将右侧商品组等比缩小并收进光树下部内侧的香槟金体积光中，使商品上方、前侧和边缘共享树光，底部与金色颗粒地面连成连续反射和柔和接触阴影；商品身份及彼此相对关系保持不变。其余内容不变。
+以当前图为唯一编辑目标。仅将右侧商品组等比缩小并收进光树下部内侧的香槟金体积光中，使商品上方、前侧和边缘共享树光，底部与金色颗粒地面连成连续反射和柔和接触阴影；若存在默认礼盒、包装盒、丝带、蝴蝶结或其他实体礼赠物，仅移除这些实体礼赠物。商品身份及彼此相对关系保持不变。其余内容不变。
 ```
 
 ### Background Main Color Correction
