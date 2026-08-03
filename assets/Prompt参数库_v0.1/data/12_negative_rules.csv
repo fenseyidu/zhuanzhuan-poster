@@ -19,7 +19,7 @@
 "neg_people_not_using_product","人物未使用商品限制","people","people_participation=是 或人物参与被推断为允许时","人物不只作为背景氛围、远景人物、旁观者或与商品无关的装饰人物；人物参与时应与用户提供的商品发生可见使用关系，不使用另一件无关商品替代主商品。","high","人物参与=是 时，QA 必须检查人物是否在使用、佩戴、手持、操作、骑行、演奏、试用或展示用户提供的商品。"
 "neg_no_template_sale","模板化促销限制","visual","用户要求高级感、内容审美或日常运营图时","不做成廉价促销模板、贴纸堆、强噪点活动页或只有折扣感的通用模板。","medium","与正向视觉语言一起使用。"
 "neg_membership_no_fixed_layer_redraw","会员固定层不重画","layer","biz_membership 且 A/S 2:1 会员日头图","AI 底图不生成会员日标识、每月22日、日期、副标题标准字、右侧规则按钮、规则文字或底部弧形；这些固定层留给后续代码合成。","high","避免 AI 重画造成重复、乱码或错位。"
-"neg_membership_s_light_integration","会员 S 圣诞商品光场融合","visual","background_recipe_id=bg_membership_christmas_luminous_gift 且有商品素材","商品组不以白底抠图、独立棚拍硬边、另一路冷光或孤立投影出现在光树前；商品必须收在光树下部内侧受光体积中，共享香槟金上方与前侧主光、选择性边缘受光、连续金色地面反射、细颗粒和柔和接触阴影，且不以过大的尺度挤压或遮蔽光树。","high","会员 S 圣诞有商品分支专用；用于防止商品像被贴入背景，而不是融入主题光场。"
+"neg_membership_s_light_integration","会员 S 圣诞商品光场融合","visual","background_recipe_id=bg_membership_christmas_luminous_gift 且有商品素材","商品组不以白底抠图、独立棚拍硬边、另一路冷光或孤立投影出现在光树前；商品必须收在光树下部内侧受光体积中，共享香槟金上方与前侧主光、选择性边缘受光、连续金色地面反射、细颗粒和柔和接触阴影，且不以过大的尺度挤压或遮蔽光树。有商品时移除且不新增礼盒、包装盒、丝带、蝴蝶结或其他实体礼赠物。","high","会员 S 圣诞有商品分支专用；用于防止商品像被贴入背景，而不是融入主题光场，或与零商品礼盒路线混用。"
 "neg_business_recycle_not_sale","回收业务边界","business","business_line_id=biz_recycle","回收业务不要画成普通卖货图，不暗示无条件高价回收或所有商品同价。","high","回收服务默认启用。"
 "neg_ranking_requires_source","榜单排行来源","fact","marketing_type_id=m_sales_ranking 或标题含 TOP/排行","排名、销量、TOP 数字必须来自用户或数据，不生成无来源榜单。","high","触发事实确认。"
 "neg_bundle_requires_source","套装关系来源","fact","combination_id=combo_bundle 或标题含套装/买赠","未确认套装或赠品关系时，不把普通多商品表达成套装、组合包、买赠。","medium","套装关系需要用户或商品数据确认。"
